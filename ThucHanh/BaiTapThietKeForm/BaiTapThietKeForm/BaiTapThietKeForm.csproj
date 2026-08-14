@@ -33,7 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
+    <Reference Include="System">
+      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.dll</HintPath>
+    </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -52,6 +54,18 @@
     <Compile Include="frmBai2.Designer.cs">
       <DependentUpon>frmBai2.cs</DependentUpon>
     </Compile>
+    <Compile Include="frmBai3.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmBai3.Designer.cs">
+      <DependentUpon>frmBai3.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmBai4.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmBai4.Designer.cs">
+      <DependentUpon>frmBai4.cs</DependentUpon>
+    </Compile>
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -68,6 +82,12 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="frmBai2.resx">
       <DependentUpon>frmBai2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmBai3.resx">
+      <DependentUpon>frmBai3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmBai4.resx">
+      <DependentUpon>frmBai4.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>

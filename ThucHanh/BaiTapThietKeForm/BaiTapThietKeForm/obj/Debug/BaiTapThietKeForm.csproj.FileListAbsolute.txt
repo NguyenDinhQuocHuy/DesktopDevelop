@@ -10,3 +10,5 @@ D:\Study\Desktop\ThucHanh\BaiTapThietKeForm\BaiTapThietKeForm\obj\Debug\BaiTapTh
 D:\Study\Desktop\ThucHanh\BaiTapThietKeForm\BaiTapThietKeForm\obj\Debug\BaiTapThietKeForm.MainForm.resources
 D:\Study\Desktop\ThucHanh\BaiTapThietKeForm\BaiTapThietKeForm\obj\Debug\BaiTapThietKeForm.frmBai1.resources
 D:\Study\Desktop\ThucHanh\BaiTapThietKeForm\BaiTapThietKeForm\obj\Debug\BaiTapThietKeForm.frmBai2.resources
+D:\Study\Desktop\ThucHanh\BaiTapThietKeForm\BaiTapThietKeForm\obj\Debug\BaiTapThietKeForm.frmBai3.resources
+D:\Study\Desktop\ThucHanh\BaiTapThietKeForm\BaiTapThietKeForm\obj\Debug\BaiTapThietKeForm.frmBai4.resources
