@@ -1,0 +1,12 @@
+D:\Study\Desktop\ThucHanh\Lab01\BaiTapWindowsForm\bin\Debug\BaiTapWindowsForm.exe.config
+D:\Study\Desktop\ThucHanh\Lab01\BaiTapWindowsForm\bin\Debug\BaiTapWindowsForm.exe
+D:\Study\Desktop\ThucHanh\Lab01\BaiTapWindowsForm\bin\Debug\BaiTapWindowsForm.pdb
+D:\Study\Desktop\ThucHanh\Lab01\BaiTapWindowsForm\obj\Debug\BaiTapWindowsForm.csproj.AssemblyReference.cache
+D:\Study\Desktop\ThucHanh\Lab01\BaiTapWindowsForm\obj\Debug\BaiTapWindowsForm.frmChinh.resources
+D:\Study\Desktop\ThucHanh\Lab01\BaiTapWindowsForm\obj\Debug\BaiTapWindowsForm.Properties.Resources.resources
+D:\Study\Desktop\ThucHanh\Lab01\BaiTapWindowsForm\obj\Debug\BaiTapWindowsForm.csproj.GenerateResource.cache
+D:\Study\Desktop\ThucHanh\Lab01\BaiTapWindowsForm\obj\Debug\BaiTapWindowsForm.csproj.CoreCompileInputs.cache
+D:\Study\Desktop\ThucHanh\Lab01\BaiTapWindowsForm\obj\Debug\BaiTapWindowsForm.exe
+D:\Study\Desktop\ThucHanh\Lab01\BaiTapWindowsForm\obj\Debug\BaiTapWindowsForm.pdb
+D:\Study\Desktop\ThucHanh\Lab01\BaiTapWindowsForm\obj\Debug\BaiTapWindowsForm.frmBai1.resources
+D:\Study\Desktop\ThucHanh\Lab01\BaiTapWindowsForm\obj\Debug\BaiTapWindowsForm.frmBai2.resources
