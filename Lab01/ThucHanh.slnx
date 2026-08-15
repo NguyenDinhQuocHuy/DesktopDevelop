@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="Bai2/Bai2.csproj" Id="35e3d3d2-84ab-4708-9be8-755bdf01a477" />
+  <Project Path="BaiTap01/BaiTap01.csproj" Id="06510119-0c18-4de0-bb2c-4935e39b29ac" />
+  <Project Path="BaiTapWindowForm_01/BaiTapWindowForm_01.csproj" Id="f94c2cd3-bc0a-4baa-88b0-b883714e19ae" />
+  <Project Path="BaiThucHanhBuoi1/BaiThucHanhBuoi1.csproj" Id="975f3d12-0007-48c6-8070-0ba2826a65f2" />
+</Solution>
