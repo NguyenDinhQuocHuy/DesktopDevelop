@@ -1,0 +1,582 @@
+<UserControl x:Class="QuanLyDichVuKhachSan.Views.LaundryServiceView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:models="clr-namespace:QuanLyDichVuKhachSan.Models"
+             xmlns:helpers="clr-namespace:QuanLyDichVuKhachSan.Helpers"
+             mc:Ignorable="d" 
+             d:DesignHeight="800" d:DesignWidth="1100"
+             UseLayoutRounding="True"
+             SnapsToDevicePixels="True"
+             TextOptions.TextFormattingMode="Display"
+             TextOptions.TextRenderingMode="ClearType"
+             TextOptions.TextHintingMode="Fixed">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+    </UserControl.Resources>
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Grid Grid.Row="0" Margin="0,0,0,16">
+            <TextBlock Text="🧺 DỊCH VỤ GIẶT ỦI" FontSize="20" FontWeight="Bold" Foreground="#1E293B"/>
+        </Grid>
+
+        <!-- Main Content -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1.5*"/>
+                <ColumnDefinition Width="16"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Cột trái: Danh sách đơn giặt & Đối tác -->
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="16"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Danh sách đối tác giặt ủi -->
+                <Border Grid.Row="0" Style="{StaticResource CardPanel}">
+                    <StackPanel>
+                        <Grid Margin="0,0,0,10">
+                            <TextBlock Text="🏪 DANH SÁCH ĐỐI TÁC GIẶT ỦI LIÊN KẾT" FontSize="15" FontWeight="Bold" Foreground="#1E293B" VerticalAlignment="Center"/>
+                            <Button Content="➕ Thêm Đối Tác" HorizontalAlignment="Right"
+                                    Height="28" Padding="10,0" FontSize="11.5" FontWeight="SemiBold"
+                                    Background="#0284C7" Foreground="White" BorderThickness="0"
+                                    Cursor="Hand" Click="BtnAddPartner_Click">
+                                <Button.Resources>
+                                    <Style TargetType="Border">
+                                        <Setter Property="CornerRadius" Value="6"/>
+                                    </Style>
+                                </Button.Resources>
+                            </Button>
+                        </Grid>
+                        <ItemsControl ItemsSource="{Binding Data.LaundryPartners}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="10" Padding="12" Margin="0,0,0,8"
+                                            Cursor="Hand"
+                                            ContextMenuOpening="PartnerBorder_ContextMenuOpening"
+                                            ToolTip="Click chuột phải để Chỉnh sửa thông tin đối tác (Admin)">
+                                        <Border.ContextMenu>
+                                            <ContextMenu>
+                                                <MenuItem Header="✏️ Chỉnh sửa" 
+                                                          FontWeight="Bold" Foreground="#0284C7"
+                                                          Click="MenuItem_EditPartner_Click"/>
+                                            </ContextMenu>
+                                        </Border.ContextMenu>
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="13" Foreground="#1E293B"/>
+                                            <TextBlock Text="{Binding Address, StringFormat='{}📍 Địa chỉ: {0}'}" FontSize="11" Foreground="#64748B"/>
+                                            <TextBlock Text="{Binding PhoneNumber, StringFormat='{}📞 SĐT: {0}'}" FontSize="11" Foreground="#0284C7"/>
+                                            <TextBlock Text="{Binding PriceSummary, StringFormat='{}🏷️ Giá vốn: {0}'}" FontSize="11" Foreground="#15803D" FontWeight="SemiBold" Margin="0,2,0,0"/>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+
+                <!-- Bảng lịch sử đơn giặt ủi -->
+                <Border Grid.Row="2" Style="{StaticResource CardPanel}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Text="📋 LỊCH SỬ ĐƠN GIẶT ỦI &amp; THEO DÕI HẸN TRẢ" FontSize="14" FontWeight="Bold" Foreground="#1E293B" Margin="0,0,0,10"/>
+                        
+                        <!-- Khung Bộ Lọc & Tìm Kiếm Nâng Cao (Thời Gian + Trạng Thái + Tìm Kiếm) -->
+                        <Border Grid.Row="1" Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="8" Padding="12,10" Margin="0,0,0,10">
+                            <StackPanel>
+                                <!-- Hàng 1: Thời gian & Chọn khoảng ngày -->
+                                <Grid Margin="0,0,0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="Thời gian:" FontSize="12.5" FontWeight="Bold" Foreground="#475569" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                    <Grid Grid.Column="1">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,12,0">
+                                            <RadioButton Content="Hôm Nay" GroupName="TimeFilter_Laundry" Command="{Binding SetTimeFilterCommand}" CommandParameter="Today" IsChecked="{Binding IsTodayTimeFilter, Mode=TwoWay}" FontWeight="Bold" FontSize="12" Foreground="#2563EB" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                                            <RadioButton Content="Tất Cả" GroupName="TimeFilter_Laundry" Command="{Binding SetTimeFilterCommand}" CommandParameter="All" IsChecked="{Binding IsAllTimeFilter, Mode=TwoWay}" FontWeight="SemiBold" FontSize="12" Foreground="#475569" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                                            <RadioButton Content="Khoảng Ngày" GroupName="TimeFilter_Laundry" Command="{Binding SetTimeFilterCommand}" CommandParameter="Custom" IsChecked="{Binding IsCustomTimeFilter, Mode=TwoWay}" FontWeight="SemiBold" FontSize="12" Foreground="#059669" VerticalAlignment="Center"/>
+                                        </StackPanel>
+
+                                        <!-- DatePicker Từ ngày - Đến ngày -->
+                                        <Grid Grid.Column="1">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" Text="Từ:" FontSize="11.5" Foreground="#64748B" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                                            <DatePicker Grid.Column="1" SelectedDate="{Binding FromDate}" Height="28" FontSize="11.5" Margin="0,0,8,0"/>
+                                            <TextBlock Grid.Column="2" Text="Đến:" FontSize="11.5" Foreground="#64748B" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                                            <DatePicker Grid.Column="3" SelectedDate="{Binding ToDate}" Height="28" FontSize="11.5"/>
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
+
+                                <!-- Hàng 2: Lọc theo trạng thái đơn giặt ủi -->
+                                <Grid Margin="0,0,0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="Trạng thái:" FontSize="12.5" FontWeight="Bold" Foreground="#475569" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                    <WrapPanel Grid.Column="1" VerticalAlignment="Center">
+                                        <RadioButton Content="Tất Cả" GroupName="StatusFilter_Laundry" Command="{Binding SetStatusFilterCommand}" CommandParameter="All" IsChecked="{Binding IsAllStatusFilter, Mode=TwoWay}" FontWeight="SemiBold" FontSize="12" Foreground="#475569" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                                        <RadioButton Content="Chờ Giao Tiệm" GroupName="StatusFilter_Laundry" Command="{Binding SetStatusFilterCommand}" CommandParameter="PendingDispatch" IsChecked="{Binding IsPendingDispatchStatusFilter, Mode=TwoWay}" FontWeight="SemiBold" FontSize="12" Foreground="#B45309" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                                        <RadioButton Content="Đang Giặt" GroupName="StatusFilter_Laundry" Command="{Binding SetStatusFilterCommand}" CommandParameter="Washing" IsChecked="{Binding IsWashingStatusFilter, Mode=TwoWay}" FontWeight="SemiBold" FontSize="12" Foreground="#0369A1" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                                        <RadioButton Content="Giặt Xong" GroupName="StatusFilter_Laundry" Command="{Binding SetStatusFilterCommand}" CommandParameter="Washed" IsChecked="{Binding IsWashedStatusFilter, Mode=TwoWay}" FontWeight="SemiBold" FontSize="12" Foreground="#7E22CE" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                                        <RadioButton Content="Hoàn Tất" GroupName="StatusFilter_Laundry" Command="{Binding SetStatusFilterCommand}" CommandParameter="Completed" IsChecked="{Binding IsCompletedStatusFilter, Mode=TwoWay}" FontWeight="SemiBold" FontSize="12" Foreground="#15803D" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                                        <RadioButton Content="Đã Hủy" GroupName="StatusFilter_Laundry" Command="{Binding SetStatusFilterCommand}" CommandParameter="Cancelled" IsChecked="{Binding IsCancelledStatusFilter, Mode=TwoWay}" FontWeight="SemiBold" FontSize="12" Foreground="#DC2626" VerticalAlignment="Center"/>
+                                    </WrapPanel>
+                                </Grid>
+
+                                <!-- Hàng 3: Thanh tìm kiếm Real-time -->
+                                <Grid>
+                                    <TextBox x:Name="TxtSearchLaundry"
+                                             Text="{Binding SearchLaundryQuery, UpdateSourceTrigger=PropertyChanged}"
+                                             Height="32"
+                                             Padding="28,0,10,0"
+                                             VerticalContentAlignment="Center"
+                                             FontSize="12"
+                                             Style="{StaticResource ModernTextBox}"/>
+                                    <TextBlock Text="🔍" FontSize="12" Foreground="#94A3B8" 
+                                               VerticalAlignment="Center" HorizontalAlignment="Left" 
+                                               Margin="8,0,0,0" IsHitTestVisible="False"/>
+                                    <TextBlock Text="Tìm kiếm khách hàng theo tên/số điện thoại" 
+                                               FontSize="12" Foreground="#94A3B8" FontStyle="Italic"
+                                               VerticalAlignment="Center" Margin="28,0,0,0"
+                                               IsHitTestVisible="False">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                <Style.Triggers>
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding Text, ElementName=TxtSearchLaundry}" Value=""/>
+                                                            <Condition Binding="{Binding IsKeyboardFocused, ElementName=TxtSearchLaundry}" Value="False"/>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                    </MultiDataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <DataGrid x:Name="GridLaundryOrders" Grid.Row="2" 
+                                  ItemsSource="{Binding FilteredLaundryOrders}"
+                                  SelectedItem="{Binding SelectedOrderToReturn, Mode=TwoWay}"
+                                  SelectionMode="Extended"
+                                  SelectionUnit="FullRow"
+                                  AutoGenerateColumns="False"
+                                  IsReadOnly="True"
+                                  CanUserAddRows="False"
+                                  CanUserDeleteRows="False"
+                                  GridLinesVisibility="Horizontal"
+                                  HorizontalGridLinesBrush="#F1F5F9"
+                                  HeadersVisibility="Column"
+                                  RowHeight="38">
+                            <DataGrid.RowStyle>
+                                <Style TargetType="DataGridRow">
+                                    <Setter Property="Cursor" Value="Hand"/>
+                                    <EventSetter Event="PreviewMouseRightButtonDown" Handler="DataGridRow_PreviewMouseRightButtonDown"/>
+                                    <EventSetter Event="ContextMenuOpening" Handler="DataGridRow_ContextMenuOpening"/>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter Property="Background" Value="#DBEAFE"/>
+                                            <Setter Property="Foreground" Value="#1E3A8A"/>
+                                            <Setter Property="FontWeight" Value="SemiBold"/>
+                                        </Trigger>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="#F1F5F9"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGrid.RowStyle>
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Mã Phiếu" Binding="{Binding OrderCode, Mode=OneWay}" Width="80" FontWeight="SemiBold"/>
+                                <DataGridTextColumn Header="Khách / Phòng" Binding="{Binding CustomerName, Mode=OneWay}" Width="105"/>
+                                <DataGridTemplateColumn Header="Đối Tác" Width="140">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Grid VerticalAlignment="Center" Background="Transparent"
+                                                  ContextMenuOpening="PartnerCell_ContextMenuOpening">
+                                                <Grid.ContextMenu>
+                                                    <ContextMenu/>
+                                                </Grid.ContextMenu>
+                                                <TextBlock Text="{Binding PartnerName}" FontWeight="SemiBold" Foreground="#1E293B"
+                                                           Visibility="{Binding HasPartner, Converter={StaticResource BoolToVis}}"/>
+                                                <Border Background="#FEF3C7" BorderBrush="#FDE68A" BorderThickness="1" CornerRadius="4" Padding="6,2" HorizontalAlignment="Left"
+                                                        Cursor="Hand"
+                                                        ToolTip="Click chuột phải để chọn đối tác giao giặt hoặc hủy đơn"
+                                                        Visibility="{Binding CanDispatch, Converter={StaticResource BoolToVis}}">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock Text="⏳ Chờ giao tiệm" FontSize="10.5" FontWeight="Bold" Foreground="#B45309"/>
+                                                        <TextBlock Text=" ▾" FontSize="9" FontWeight="Bold" Foreground="#B45309"/>
+                                                    </StackPanel>
+                                                </Border>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTextColumn Header="Dịch Vụ" Binding="{Binding ServiceTypeDisplay, Mode=OneWay}" Width="110"/>
+                                <DataGridTextColumn Header="Số Kg" Binding="{Binding WeightKg, Mode=OneWay, StringFormat='{}{0} Kg'}" Width="55"/>
+                                <DataGridTextColumn Header="Hẹn Trả" Binding="{Binding AppointmentDate, Mode=OneWay, StringFormat='{}{0:dd/MM HH:mm}'}" Width="90"/>
+                                <DataGridTextColumn Header="Thanh Toán" Binding="{Binding PaymentMethod, Mode=OneWay}" Width="110"/>
+                                <DataGridTextColumn Header="Tổng Tiền" Binding="{Binding TotalPrice, Mode=OneWay, Converter={StaticResource CurrencyConv}}" Width="85" FontWeight="Bold"/>
+                                <DataGridTextColumn Header="Hoa Hồng KS" Binding="{Binding HotelEarnings, Mode=OneWay, Converter={StaticResource CurrencyConv}}" Width="80" Foreground="#D97706"/>
+                                <DataGridTemplateColumn Header="Trạng Thái" Width="100">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Border CornerRadius="4" Padding="6,2" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <Border.Style>
+                                                    <Style TargetType="Border">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Status}" Value="PendingDispatch">
+                                                                <Setter Property="Background" Value="#FEF3C7"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Status}" Value="Washing">
+                                                                <Setter Property="Background" Value="#E0F2FE"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Status}" Value="Washed">
+                                                                <Setter Property="Background" Value="#F3E8FF"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Status}" Value="Completed">
+                                                                <Setter Property="Background" Value="#DCFCE7"/>
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Status}" Value="Cancelled">
+                                                                <Setter Property="Background" Value="#FEE2E2"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Border.Style>
+                                                <TextBlock Text="{Binding StatusDisplay}" FontSize="11" FontWeight="Bold">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding Status}" Value="PendingDispatch">
+                                                                    <Setter Property="Foreground" Value="#B45309"/>
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding Status}" Value="Washing">
+                                                                    <Setter Property="Foreground" Value="#0369A1"/>
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding Status}" Value="Washed">
+                                                                    <Setter Property="Foreground" Value="#7E22CE"/>
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding Status}" Value="Completed">
+                                                                    <Setter Property="Foreground" Value="#15803D"/>
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding Status}" Value="Cancelled">
+                                                                    <Setter Property="Foreground" Value="#DC2626"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </Border>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                </Border>
+            </Grid>
+
+            <!-- Cột phải: Form Ghi nhận & Quyết toán đơn giặt ủi (Lễ tân) -->
+            <Border Grid.Column="2" Style="{StaticResource CardPanel}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <!-- GIAI ĐOẠN 1: TIẾP NHẬN ĐƠN GIẶT ỦI NGOÀI -->
+                        <TextBlock Text="🧺 TIẾP NHẬN ĐƠN GIẶT ỦI NGOÀI" FontSize="14" FontWeight="Bold" Foreground="#1E293B" Margin="0,0,0,10"/>
+
+                        <!-- 1. Loại Hình Dịch Vụ Giặt (Chốt giá bán thống nhất lúc nhận) -->
+                        <TextBlock Text="1. Loại Hình Dịch Vụ Giặt (*):" FontSize="11" FontWeight="Bold" Foreground="#0284C7" Margin="0,0,0,3"/>
+                        <ComboBox SelectedValue="{Binding SelectedServiceType}" SelectedValuePath="Tag" Height="34" Margin="0,0,0,8" Style="{StaticResource ModernComboBox}">
+                            <ComboBoxItem Content="🧺 Giặt sấy khô thông thường (30.000 đ/Kg)" Tag="{x:Static models:LaundryServiceType.WashAndDry}" IsSelected="True"/>
+                            <ComboBoxItem Content="👔 Giặt hấp vest / đầm dạ hội (80.000 đ/Kg)" Tag="{x:Static models:LaundryServiceType.DryCleaning}"/>
+                            <ComboBoxItem Content="✨ Ủi phẳng cao cấp (40.000 đ/Kg)" Tag="{x:Static models:LaundryServiceType.Ironing}"/>
+                        </ComboBox>
+
+                        <Grid Margin="0,0,0,6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="8"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="Tên Khách Hàng:" FontSize="10.5" FontWeight="SemiBold" Foreground="#64748B" Margin="0,0,0,2"/>
+                                <TextBox Text="{Binding CustomerName, UpdateSourceTrigger=PropertyChanged}" 
+                                         helpers:InputHelper.ValidationMode="NameOnly"
+                                         Style="{StaticResource ModernTextBox}" 
+                                         Height="34"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="Số Phòng (*):" FontSize="10.5" FontWeight="SemiBold" Foreground="#64748B" Margin="0,0,0,2"/>
+                                <ComboBox ItemsSource="{Binding Data.AvailableRoomNumbers}" 
+                                          Text="{Binding RoomNumber, UpdateSourceTrigger=PropertyChanged}" 
+                                          IsEditable="True" 
+                                          Style="{StaticResource ModernComboBox}" 
+                                          Height="34"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <TextBlock Text="Số Điện Thoại Liên Lạc:" FontSize="10.5" FontWeight="SemiBold" Foreground="#64748B" Margin="0,0,0,2"/>
+                        <TextBox Text="{Binding PhoneNumber, UpdateSourceTrigger=PropertyChanged}" 
+                                 helpers:InputHelper.ValidationMode="PhoneOnly"
+                                 Style="{StaticResource ModernTextBox}" 
+                                 Height="34" 
+                                 Margin="0,0,0,6"/>
+
+                        <Grid Margin="0,0,0,6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="8"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="Cân Nặng (Kg):" FontSize="10.5" FontWeight="SemiBold" Foreground="#64748B" Margin="0,0,0,2"/>
+                                <Grid Height="34">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="28"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox Grid.Column="0" 
+                                             Text="{Binding WeightInputStr, UpdateSourceTrigger=PropertyChanged}" 
+                                             Style="{StaticResource ModernTextBox}" 
+                                             Height="34"
+                                             helpers:InputHelper.ValidationMode="DecimalOnly"
+                                             ToolTip="Nhập số kg hoặc bấm mũi tên tăng giảm (1.0, 2.0...)"/>
+                                    <Grid Grid.Column="1" Margin="2,0,0,0">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
+                                        </Grid.RowDefinitions>
+                                        <Button Grid.Row="0" Content="▲" FontSize="9" FontWeight="Bold"
+                                                Padding="0" Margin="0,0,0,1"
+                                                Background="#E2E8F0" Foreground="#1E293B" BorderThickness="0" Cursor="Hand"
+                                                Command="{Binding IncreaseWeightCommand}"
+                                                ToolTip="Tăng 1.0 Kg">
+                                            <Button.Resources>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="CornerRadius" Value="3,3,0,0"/>
+                                                </Style>
+                                            </Button.Resources>
+                                        </Button>
+                                        <Button Grid.Row="1" Content="▼" FontSize="9" FontWeight="Bold"
+                                                Padding="0" Margin="0,1,0,0"
+                                                Background="#E2E8F0" Foreground="#1E293B" BorderThickness="0" Cursor="Hand"
+                                                Command="{Binding DecreaseWeightCommand}"
+                                                ToolTip="Giảm 1.0 Kg">
+                                            <Button.Resources>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="CornerRadius" Value="0,0,3,3"/>
+                                                </Style>
+                                            </Button.Resources>
+                                        </Button>
+                                    </Grid>
+                                </Grid>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="Đơn Giá/Kg (Niêm yết):" FontSize="10.5" FontWeight="SemiBold" Foreground="#64748B" Margin="0,0,0,2"/>
+                                <TextBox Text="{Binding UnitPricePerKg, StringFormat='{}{0:N0} đ'}" 
+                                         IsReadOnly="True" 
+                                         Focusable="False" 
+                                         Background="#F1F5F9" 
+                                         Foreground="#1E293B" 
+                                         FontWeight="Bold" 
+                                         Style="{StaticResource ModernTextBox}" 
+                                         Height="34"
+                                         ToolTip="Đơn giá niêm yết theo loại dịch vụ đã chọn (chỉ hiển thị, không thể chỉnh sửa)"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <TextBlock Text="Ghi Chú Tình Trạng Quần Áo Lúc Nhận:" FontSize="10.5" FontWeight="SemiBold" Foreground="#64748B" Margin="0,0,0,2"/>
+                        <TextBox Text="{Binding ClothesConditionNote, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource ModernTextBox}" Height="34" Margin="0,0,0,6"/>
+
+                        <!-- Thời gian hẹn trả đồ -->
+                        <Grid Margin="0,0,0,6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1.4*"/>
+                                <ColumnDefinition Width="8"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="Ngày Hẹn Trả:" FontSize="10.5" FontWeight="SemiBold" Foreground="#64748B" Margin="0,0,0,2"/>
+                                <DatePicker SelectedDate="{Binding AppointmentDate}" Height="34"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="Giờ Hẹn Trả:" FontSize="10.5" FontWeight="SemiBold" Foreground="#64748B" Margin="0,0,0,2"/>
+                                <TextBox Text="{Binding AppointmentTimeStr, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource ModernTextBox}" Height="34"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Phương thức thanh toán: Ghi nợ vào phòng vs Thanh toán trực tiếp -->
+                        <TextBlock Text="Phương Thức Thanh Toán:" FontSize="10.5" FontWeight="SemiBold" Foreground="#64748B" Margin="0,0,0,2"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                            <RadioButton Content="Ghi nợ vào phòng" IsChecked="{Binding IsRoomChargePayment}" Margin="0,0,14,0" FontWeight="SemiBold" Foreground="#1E293B"/>
+                            <RadioButton Content="Thanh toán trực tiếp" IsChecked="{Binding IsDirectPayment}" FontWeight="SemiBold" Foreground="#1E293B"/>
+                        </StackPanel>
+
+                        <!-- Hình thức thu tiền (chỉ hiển thị khi chọn Thanh toán trực tiếp) -->
+                        <StackPanel Visibility="{Binding IsDirectPayment, Converter={StaticResource BoolToVis}}" Margin="0,0,0,6">
+                            <TextBlock Text="Hình Thức Thu Tiền:" FontSize="10.5" FontWeight="SemiBold" Foreground="#64748B" Margin="0,0,0,2"/>
+                            <StackPanel Orientation="Horizontal">
+                                <RadioButton Content="💵 Tiền mặt" IsChecked="{Binding IsCashPayment}" Margin="0,0,14,0" FontWeight="SemiBold" Foreground="#1E293B"/>
+                                <RadioButton Content="💳 Chuyển khoản" IsChecked="{Binding IsTransferPayment}" FontWeight="SemiBold" Foreground="#1E293B"/>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!-- 2. Gán Đối Tác Nhận Giặt (Có thể để trống để giao sau) -->
+                        <Border Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="8" Padding="8" Margin="0,0,0,8">
+                            <StackPanel>
+                                <Grid Margin="0,0,0,4">
+                                    <TextBlock Text="2. Gán Đối Tác Nhận Giặt:" FontSize="11" FontWeight="Bold" Foreground="#1E293B" VerticalAlignment="Center"/>
+                                    <CheckBox Content="Bàn giao sau" IsChecked="{Binding IsDeferredPartner}" HorizontalAlignment="Right" FontSize="10.5" FontWeight="SemiBold" Foreground="#64748B"/>
+                                </Grid>
+                                <ComboBox ItemsSource="{Binding Data.LaundryPartners}" SelectedItem="{Binding SelectedPartner}" DisplayMemberPath="Name" 
+                                          IsEnabled="{Binding CanSelectPartner}" Height="32" Style="{StaticResource ModernComboBox}"/>
+                                <TextBlock Text="💡 Có thể để trống lúc nhận đồ, sau đó giao tiệm rảnh qua nút 'Giao tiệm' trong danh sách." 
+                                           FontSize="10" Foreground="#64748B" TextWrapping="Wrap" Margin="0,3,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Background="#F1F5F9" CornerRadius="8" Padding="10" Margin="0,0,0,8">
+                            <Grid>
+                                <TextBlock Text="TỔNG TIỀN THU:" FontSize="11.5" FontWeight="Bold" Foreground="#1E293B" VerticalAlignment="Center"/>
+                                <TextBlock Text="{Binding TotalPrice, Converter={StaticResource CurrencyConv}}" FontSize="16" FontWeight="Bold" Foreground="#D97706" HorizontalAlignment="Right"/>
+                            </Grid>
+                        </Border>
+
+                        <Button Content="🧾 TẠO ĐƠN &amp; IN PHIẾU HẸN LẤY ĐỒ" Style="{StaticResource GreenButton}" Height="36" FontSize="12" Command="{Binding CreateOrderCommand}" Margin="0,0,0,14"/>
+
+                        <!-- GIAI ĐOẠN 2: TRẢ ĐỒ & QUYẾT TOÁN -->
+                        <Border Background="#F8FAFC" BorderBrush="#CBD5E1" BorderThickness="1.5" CornerRadius="10" Padding="10">
+                            <StackPanel>
+                                <TextBlock Text="🏁 TRẢ ĐỒ &amp; QUYẾT TOÁN" FontSize="13" FontWeight="Bold" Foreground="#1E293B" Margin="0,0,0,6"/>
+
+                                <TextBlock Text="Chọn đơn cần trả đồ:" FontSize="10.5" FontWeight="SemiBold" Foreground="#64748B" Margin="0,0,0,2"/>
+                                <ComboBox ItemsSource="{Binding PendingReturns}" 
+                                          SelectedItem="{Binding SelectedOrderToReturn}" 
+                                          DisplayMemberPath="DisplayTitle" 
+                                          Height="32" 
+                                          Margin="0,0,0,8"
+                                          Style="{StaticResource ModernComboBox}"/>
+
+                                <!-- Bảng thông tin đơn trả chi tiết -->
+                                <Border Background="White" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="8" Padding="10" Margin="0,0,0,8"
+                                        Visibility="{Binding HasSelectedOrderToReturn, Converter={StaticResource BoolToVis}}">
+                                    <StackPanel>
+                                        <Grid Margin="0,0,0,3">
+                                            <TextBlock Text="Khách hàng:" FontSize="10.5" Foreground="#64748B"/>
+                                            <TextBlock Text="{Binding SelectedOrderToReturn.CustomerName}" FontSize="11" FontWeight="SemiBold" Foreground="#1E293B" HorizontalAlignment="Right"/>
+                                        </Grid>
+                                        <Grid Margin="0,0,0,3">
+                                            <TextBlock Text="Số phòng / SĐT:" FontSize="10.5" Foreground="#64748B"/>
+                                            <TextBlock FontSize="10.5" FontWeight="SemiBold" Foreground="#0284C7" HorizontalAlignment="Right">
+                                                <Run Text="{Binding SelectedOrderToReturn.RoomNumber, StringFormat='P.{0}'}"/>
+                                                <Run Text=" • "/>
+                                                <Run Text="{Binding SelectedOrderToReturn.PhoneNumber}"/>
+                                            </TextBlock>
+                                        </Grid>
+                                        <Grid Margin="0,0,0,3">
+                                            <TextBlock Text="Dịch vụ &amp; Số kg:" FontSize="10.5" Foreground="#64748B"/>
+                                            <TextBlock FontSize="10.5" FontWeight="SemiBold" Foreground="#1E293B" HorizontalAlignment="Right">
+                                                <Run Text="{Binding SelectedOrderToReturn.ServiceTypeDisplay}"/>
+                                                <Run Text=" ("/>
+                                                <Run Text="{Binding SelectedOrderToReturn.WeightKg}"/>
+                                                <Run Text=" kg)"/>
+                                            </TextBlock>
+                                        </Grid>
+                                        <Grid Margin="0,0,0,3">
+                                            <TextBlock Text="Đối tác giặt:" FontSize="10.5" Foreground="#64748B"/>
+                                            <TextBlock Text="{Binding SelectedOrderToReturn.PartnerName}" FontSize="10.5" FontWeight="SemiBold" Foreground="#D97706" HorizontalAlignment="Right"/>
+                                        </Grid>
+                                        <Grid Margin="0,0,0,3">
+                                            <TextBlock Text="Thanh toán lúc nhận:" FontSize="10.5" Foreground="#64748B"/>
+                                            <TextBlock Text="{Binding SelectedOrderToReturn.PaymentMethod}" FontSize="10.5" FontWeight="SemiBold" Foreground="#059669" HorizontalAlignment="Right"/>
+                                        </Grid>
+                                        <Separator Margin="0,4" Background="#E2E8F0"/>
+                                        <Grid Margin="0,0,0,3">
+                                            <TextBlock Text="Tiền giặt niêm yết:" FontSize="10.5" Foreground="#475569"/>
+                                            <TextBlock Text="{Binding SelectedOrderToReturn.TotalPrice, Converter={StaticResource CurrencyConv}}" FontSize="11" FontWeight="SemiBold" Foreground="#1E293B" HorizontalAlignment="Right"/>
+                                        </Grid>
+                                        <Grid Margin="0,0,0,3">
+                                            <TextBlock Text="Chi phí phát sinh (nếu có):" FontSize="10.5" Foreground="#475569" VerticalAlignment="Center"/>
+                                            <TextBox Text="{Binding ReturnExtraCost, UpdateSourceTrigger=PropertyChanged}" 
+                                                     helpers:InputHelper.ValidationMode="DecimalOnly"
+                                                     Width="90" Height="24" Style="{StaticResource ModernTextBox}" HorizontalAlignment="Right" TextAlignment="Right"/>
+                                        </Grid>
+                                        <Separator Margin="0,4" Background="#CBD5E1"/>
+                                        <Grid Margin="0,2,0,2">
+                                            <TextBlock Text="TỔNG CỘNG TẤT TOÁN:" FontSize="11" FontWeight="Bold" Foreground="#D97706" VerticalAlignment="Center"/>
+                                            <TextBlock Text="{Binding ReturnGrandTotal, Converter={StaticResource CurrencyConv}}" FontSize="14" FontWeight="Bold" Foreground="#D97706" HorizontalAlignment="Right"/>
+                                        </Grid>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Quản lý đền bù thiệt hại -->
+                                <Border Background="#FEF2F2" BorderBrush="#FECACA" BorderThickness="1" CornerRadius="8" Padding="8" Margin="0,0,0,8"
+                                        Visibility="{Binding HasSelectedOrderToReturn, Converter={StaticResource BoolToVis}}">
+                                    <StackPanel>
+                                        <CheckBox Content="⚠️ Đền bù thiệt hại (nếu làm mất / hỏng đồ)" 
+                                                  IsChecked="{Binding HasCompensation}" 
+                                                  FontWeight="Bold" Foreground="#DC2626" FontSize="10.5"/>
+
+                                        <StackPanel Visibility="{Binding ShowCompensationFields, Converter={StaticResource BoolToVis}}" Margin="0,6,0,0">
+                                            <TextBlock Text="Bên Chịu Trách Nhiệm Đền Bù:" FontSize="10" FontWeight="SemiBold" Foreground="#64748B" Margin="0,0,0,2"/>
+                                            <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                                                <RadioButton Content="Đối tác giặt chịu" IsChecked="{Binding IsDoiTacPayer}" Margin="0,0,12,0" FontWeight="SemiBold" Foreground="#1E293B"/>
+                                                <RadioButton Content="Khách sạn chịu" IsChecked="{Binding IsKhachSanPayer}" FontWeight="SemiBold" Foreground="#1E293B"/>
+                                            </StackPanel>
+
+                                            <TextBlock Text="Số Tiền Đền Bù (đ):" FontSize="10" FontWeight="SemiBold" Foreground="#64748B" Margin="0,0,0,2"/>
+                                            <TextBox Text="{Binding CompensationAmount, UpdateSourceTrigger=PropertyChanged, StringFormat='{}{0:N0}'}" 
+                                                     helpers:InputHelper.ValidationMode="DecimalOnly"
+                                                     Style="{StaticResource ModernTextBox}" Height="28" Margin="0,0,0,4"/>
+
+                                            <TextBlock Text="Lý Do / Chi Tiết Đền Bù:" FontSize="10" FontWeight="SemiBold" Foreground="#64748B" Margin="0,0,0,2"/>
+                                            <TextBox Text="{Binding CompensationReason, UpdateSourceTrigger=PropertyChanged}" 
+                                                     Style="{StaticResource ModernTextBox}" Height="28" Margin="0,0,0,4"/>
+
+                                            <TextBlock Text="💡 Tiền đền bù sẽ được đẩy sang bill phòng để trừ khi khách check-out, và tự động trừ công nợ đối tác khi quyết toán."
+                                                       FontSize="9.5" Foreground="#DC2626" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+
+                                <Button Content="{Binding SettlementButtonLabel}" 
+                                        IsEnabled="{Binding HasSelectedOrderToReturn}"
+                                        Style="{StaticResource GoldButton}" 
+                                        Height="36" 
+                                        FontSize="12" 
+                                        Command="{Binding CompleteReturnCommand}"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

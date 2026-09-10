@@ -1,0 +1,65 @@
+<Window x:Class="QuanLyDichVuKhachSan.Views.EditFoodItemDialogWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Chỉnh Sửa Mặt Hàng - Dalat Hotel" 
+        Height="520" Width="440" 
+        WindowStartupLocation="CenterScreen"
+        Background="#0F172A"
+        ResizeMode="NoResize">
+
+    <Grid Margin="20">
+        <Border Background="White" CornerRadius="14" Padding="22" BorderBrush="#CBD5E1" BorderThickness="1">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="16" ShadowDepth="3" Opacity="0.15" Color="#000000"/>
+            </Border.Effect>
+
+            <StackPanel>
+                <TextBlock Text="✏️ CHỈNH SỬA MẶT HÀNG" FontSize="15" FontWeight="Bold" Foreground="#1E293B" Margin="0,0,0,14"/>
+
+                <!-- Tên Mặt Hàng -->
+                <TextBlock Text="Tên Mặt Hàng:" FontSize="11" FontWeight="SemiBold" Foreground="#64748B" Margin="0,0,0,3"/>
+                <TextBox x:Name="TxtName" Style="{StaticResource ModernTextBox}" Height="34" Margin="0,0,0,10"/>
+
+                <!-- Phân Loại -->
+                <TextBlock Text="Phân Loại Mặt Hàng:" FontSize="11" FontWeight="SemiBold" Foreground="#64748B" Margin="0,0,0,3"/>
+                <ComboBox x:Name="CmbCategory" Style="{StaticResource ModernComboBox}" Height="34" Margin="0,0,0,10">
+                    <ComboBoxItem Content="🍲 Đồ ăn"/>
+                    <ComboBoxItem Content="🥤 Thức uống"/>
+                </ComboBox>
+
+                <!-- ĐVT Bán Lẻ -->
+                <TextBlock Text="Đơn Vị Bán Lẻ (Lon, Chai, Gói, Hộp...):" FontSize="11" FontWeight="SemiBold" Foreground="#64748B" Margin="0,0,0,3"/>
+                <TextBox x:Name="TxtRetailUnit" Style="{StaticResource ModernTextBox}" Height="34" Margin="0,0,0,10"/>
+
+                <!-- Giá Bán Lẻ -->
+                <TextBlock Text="Đơn Giá Bán Lẻ (VNĐ):" FontSize="11" FontWeight="SemiBold" Foreground="#64748B" Margin="0,0,0,3"/>
+                <TextBox x:Name="TxtPrice" Style="{StaticResource ModernTextBox}" Height="34" FontWeight="Bold" Foreground="#D97706" Margin="0,0,0,10"/>
+
+                <!-- ĐVT Lúc Nhập & Hệ Số Quy Đổi -->
+                <Grid Margin="0,0,0,18">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1.2*"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="ĐVT Lúc Nhập (Mặc định):" FontSize="11" FontWeight="SemiBold" Foreground="#64748B" Margin="0,0,0,3"/>
+                        <TextBox x:Name="TxtDefaultImportUnit" Style="{StaticResource ModernTextBox}" Height="34"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="Hệ Số Quy Đổi Lẻ:" FontSize="11" FontWeight="SemiBold" Foreground="#64748B" Margin="0,0,0,3"/>
+                        <TextBox x:Name="TxtDefaultConversionRate" Style="{StaticResource ModernTextBox}" Height="34" FontWeight="Bold" Foreground="#0284C7"/>
+                    </StackPanel>
+                </Grid>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="Hủy Bỏ" Click="BtnCancel_Click" Height="36" Width="95" Margin="0,0,10,0" Style="{StaticResource OutlineButton}"/>
+                    <Button Content="💾 Lưu Thay Đổi" Click="BtnSave_Click" Height="36" Width="130" Style="{StaticResource PrimaryButton}" Background="#16A34A"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

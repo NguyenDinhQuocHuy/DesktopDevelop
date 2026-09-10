@@ -1,0 +1,186 @@
+<Window x:Class="QuanLyDichVuKhachSan.Views.InvoiceBillWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Hóa Đơn - Dalat Hotel" 
+        Height="720" Width="720" 
+        WindowStartupLocation="CenterScreen"
+        Background="#0F172A"
+        ResizeMode="NoResize"
+        UseLayoutRounding="True"
+        SnapsToDevicePixels="True"
+        TextOptions.TextFormattingMode="Display"
+        TextOptions.TextRenderingMode="ClearType"
+        TextOptions.TextHintingMode="Fixed">
+
+    <Grid Margin="20">
+        <!-- Invoice Sheet -->
+        <Border Background="White" CornerRadius="16" Padding="28" BorderBrush="#CBD5E1" BorderThickness="1">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="25" ShadowDepth="6" Opacity="0.25" Color="#000000"/>
+            </Border.Effect>
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/> <!-- Header -->
+                    <RowDefinition Height="Auto"/> <!-- Divider -->
+                    <RowDefinition Height="Auto"/> <!-- Info Grid -->
+                    <RowDefinition Height="*"/>    <!-- Service Items Table -->
+                    <RowDefinition Height="Auto"/> <!-- Total Summary -->
+                    <RowDefinition Height="Auto"/> <!-- Action Buttons -->
+                </Grid.RowDefinitions>
+
+                <!-- 1. Header -->
+                <Grid Grid.Row="0" Margin="0,0,0,12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel>
+                        <TextBlock Text="🏨 KHÁCH SẠN DALAT HOTEL" FontSize="18" FontWeight="Bold" Foreground="#D97706"/>
+                        <TextBlock Text="📍 01 Lê Đại Hành, Phường 1, TP. Đà Lạt, Lâm Đồng" FontSize="11" Foreground="#64748B" Margin="0,2,0,0"/>
+                        <TextBlock Text="📞 Hotline: 0263.3888.999 | ✉️ contact@dalathotel.vn" FontSize="11" Foreground="#64748B" Margin="0,2,0,0"/>
+                    </StackPanel>
+
+                    <!-- Header Badge: Tiêu đề HÓA ĐƠN chung -->
+                    <Border Grid.Column="1" Background="#FEF3C7" BorderBrush="#F59E0B" BorderThickness="1" CornerRadius="8" Padding="16,6" VerticalAlignment="Center">
+                        <StackPanel HorizontalAlignment="Center">
+                            <TextBlock Text="HÓA ĐƠN" FontSize="15" FontWeight="Bold" Foreground="#B45309" HorizontalAlignment="Center"/>
+                            <TextBlock x:Name="TxtInvoiceCode" Text="HD-2026-001" FontSize="11.5" FontWeight="SemiBold" Foreground="#D97706" HorizontalAlignment="Center" Margin="0,2,0,0"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <!-- 2. Divider -->
+                <Separator Grid.Row="1" Background="#E2E8F0" Margin="0,0,0,12"/>
+
+                <!-- 3. Customer Info Grid -->
+                <Border Grid.Row="2" Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="10" Padding="16,12" Margin="0,0,0,14">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Cột Trái (Col 0): Khách hàng, SĐT/CCCD, Người lập -->
+                        <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,12,8">
+                            <TextBlock Text="Khách hàng:" FontSize="11" Foreground="#64748B"/>
+                            <TextBlock x:Name="TxtCustomerName" Text="Quốc Huy" FontSize="13.5" FontWeight="Bold" Foreground="#1E293B"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,12,8">
+                            <TextBlock Text="Số điện thoại / CCCD:" FontSize="11" Foreground="#64748B"/>
+                            <TextBlock x:Name="TxtPhoneAndCccd" Text="0948198812 | CCCD: 068205013099" FontSize="12" FontWeight="SemiBold" Foreground="#334155"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,0,12,0">
+                            <TextBlock Text="Người lập hóa đơn:" FontSize="11" Foreground="#64748B"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
+                                <TextBlock Text="📝 " FontSize="11" Foreground="#64748B"/>
+                                <TextBlock x:Name="TxtCreatorStaff" Text="Lễ tân" FontSize="12.5" FontWeight="Bold" Foreground="#0284C7"/>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!-- Cột Phải (Col 1): Phòng lưu trú, Thời gian xuất hóa đơn, Thu ngân / Trực ca -->
+                        <StackPanel Grid.Row="0" Grid.Column="1" Margin="12,0,0,8">
+                            <TextBlock Text="Phòng lưu trú:" FontSize="11" Foreground="#64748B"/>
+                            <TextBlock x:Name="TxtRoomNumber" Text="103 (Standard)" FontSize="13.5" FontWeight="Bold" Foreground="#2563EB"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="1" Grid.Column="1" Margin="12,0,0,8">
+                            <TextBlock Text="Thời gian xuất hóa đơn:" FontSize="11" Foreground="#64748B"/>
+                            <TextBlock x:Name="TxtInvoiceDate" Text="30/08/2026 14:35" FontSize="12" FontWeight="SemiBold" Foreground="#334155"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="2" Grid.Column="1" Margin="12,0,0,0">
+                            <TextBlock Text="Thu ngân / Trực ca:" FontSize="11" Foreground="#64748B"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
+                                <TextBlock Text="👤 " FontSize="11" Foreground="#64748B"/>
+                                <TextBlock x:Name="TxtCashierStaff" Text="Lê Hoàng Nam" FontSize="12.5" FontWeight="Bold" Foreground="#059669"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- 4. Table of Paid Service Items (Chỉ hiển thị chi tiết các dịch vụ sử dụng) -->
+                <Grid Grid.Row="3" Margin="0,0,0,14">
+                    <DataGrid x:Name="DgInvoiceItems" 
+                              AutoGenerateColumns="False" 
+                              IsReadOnly="True" 
+                              CanUserAddRows="False" 
+                              GridLinesVisibility="Horizontal"
+                              HorizontalGridLinesBrush="#F1F5F9"
+                              Background="Transparent"
+                              BorderThickness="1"
+                              BorderBrush="#E2E8F0"
+                              RowHeight="36"
+                              HeadersVisibility="Column"
+                              FontSize="12">
+                        <DataGrid.Resources>
+                            <Style TargetType="DataGridColumnHeader">
+                                <Setter Property="Background" Value="#F1F5F9"/>
+                                <Setter Property="Foreground" Value="#475569"/>
+                                <Setter Property="FontWeight" Value="Bold"/>
+                                <Setter Property="Height" Value="32"/>
+                                <Setter Property="Padding" Value="8,0"/>
+                            </Style>
+                        </DataGrid.Resources>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Danh Mục" Binding="{Binding ServiceCategory}" Width="100" FontWeight="SemiBold"/>
+                            <DataGridTextColumn Header="Chi Tiết Dịch Vụ" Binding="{Binding ServiceName}" Width="*"/>
+                            <DataGridTextColumn Header="Thời Gian" Binding="{Binding UsedTime, StringFormat='dd/MM/yyyy HH:mm'}" Width="130"/>
+                            <DataGridTemplateColumn Header="Thành Tiền" Width="130">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Amount, StringFormat='{}{0:N0} đ'}" 
+                                                   FontWeight="Bold" 
+                                                   Foreground="#D97706" 
+                                                   HorizontalAlignment="Right" 
+                                                   VerticalAlignment="Center" 
+                                                   Margin="0,0,8,0"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+
+                <!-- 5. Total Summary Breakdown (Chỉ tính tổng tiền dịch vụ) -->
+                <Grid Grid.Row="4" Margin="0,0,0,16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="* Cảm ơn Quý khách đã sử dụng dịch vụ tại Khách sạn Dalat Hotel!" FontSize="11.5" Foreground="#64748B" FontWeight="SemiBold"/>
+                        <TextBlock Text="Chúc Quý khách một chuyến lưu trú vui vẻ &amp; trọn vẹn!" FontSize="11" Foreground="#94A3B8" FontStyle="Italic" Margin="0,2,0,0"/>
+                    </StackPanel>
+
+                    <!-- Total Amount Box -->
+                    <Border Grid.Column="1" Background="#F0FDF4" BorderBrush="#86EFAC" BorderThickness="1.5" CornerRadius="10" Padding="20,10">
+                        <StackPanel HorizontalAlignment="Right">
+                            <TextBlock Text="TỔNG CỘNG THANH TOÁN:" FontSize="11.5" FontWeight="Bold" Foreground="#15803D" HorizontalAlignment="Right"/>
+                            <TextBlock x:Name="TxtGrandTotal" Text="525.000 đ" FontSize="20" FontWeight="Bold" Foreground="#16A34A" HorizontalAlignment="Right" Margin="0,2,0,0"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <!-- 6. Action Buttons -->
+                <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button x:Name="BtnPrint" Content="🖨️ In Hóa Đơn" Click="PrintButton_Click" Height="38" Width="130" Margin="0,0,10,0" Style="{StaticResource OutlineButton}"/>
+                    <Button x:Name="BtnCancel" Content="❌ Hủy Bỏ" Click="CancelButton_Click" Height="38" Width="120" Margin="0,0,10,0" Style="{StaticResource OutlineButton}" Foreground="#DC2626" BorderBrush="#FCA5A5"/>
+                    <Button x:Name="BtnConfirm" Content="✅ Đóng &amp; Hoàn Tất" Click="CloseButton_Click" Height="38" Width="160" Style="{StaticResource PrimaryButton}" Background="#16A34A"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

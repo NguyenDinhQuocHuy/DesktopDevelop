@@ -1,0 +1,297 @@
+<UserControl x:Class="QuanLyDichVuKhachSan.Views.StatisticsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="800" d:DesignWidth="1100"
+             UseLayoutRounding="True"
+             SnapsToDevicePixels="True"
+             TextOptions.TextFormattingMode="Display"
+             TextOptions.TextRenderingMode="ClearType"
+             TextOptions.TextHintingMode="Fixed">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <Grid Margin="24">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Header -->
+            <Grid Grid.Row="0" Margin="0,0,0,16">
+                <TextBlock Text="BÁO CÁO DOANH THU" FontSize="20" FontWeight="Bold" Foreground="#1E293B"/>
+            </Grid>
+
+            <!-- TOP HERO SECTION: BIỂU ĐỒ TRÒN (BÊN TRÁI) & DASHBOARD THỐNG KÊ REALTIME + BỘ LỌC (BÊN PHẢI) -->
+            <Grid Grid.Row="1" Margin="0,0,0,24">
+                <Grid.ColumnDefinitions>
+                    <!-- Cột trái: Biểu đồ tròn Donut Chart & Chú thích -->
+                    <ColumnDefinition Width="320"/>
+                    <ColumnDefinition Width="18"/>
+                    <!-- Cột phải: Dashboard thống kê realtime + Bộ lọc thời gian -->
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- KHỐI TRÁI: BIỂU ĐỒ TRÒN TỶ TRỌNG DOANH THU -->
+                <Border Grid.Column="0" Style="{StaticResource CardPanel}" Padding="16">
+                    <StackPanel HorizontalAlignment="Center">
+                        <TextBlock Text="BIỂU ĐỒ TỶ TRỌNG DOANH THU" FontWeight="Bold" Foreground="#1E293B" FontSize="13" HorizontalAlignment="Center" Margin="0,0,0,12"/>
+                        
+                        <!-- Vùng vẽ biểu đồ tròn -->
+                        <Grid Width="210" Height="210" HorizontalAlignment="Center">
+                            <ItemsControl ItemsSource="{Binding PieSlices}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <Grid/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Path Data="{Binding SliceGeometry}" 
+                                              Fill="{Binding SliceBrush}" 
+                                              Stroke="#CBD5E1" 
+                                              StrokeThickness="1.5"
+                                              ToolTip="{Binding TooltipText}"
+                                              Cursor="Hand"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Grid>
+
+                        <!-- Chú thích màu sắc (Legend: Màu gì - Dịch vụ gì) -->
+                        <ItemsControl ItemsSource="{Binding RevenueSummaries}" Margin="0,14,0,0">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="0,3">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Border Grid.Column="0" Width="14" Height="14" CornerRadius="3" Background="{Binding ColorBrush}" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding ServiceName}" FontSize="12" Foreground="#334155" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+
+                <!-- KHỐI PHẢI: DASHBOARD THỐNG KÊ REALTIME & BỘ LỌC NGÀY/THÁNG/NĂM -->
+                <Border Grid.Column="2" Style="{StaticResource CardPanel}" Padding="18">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="12"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Thanh chọn bộ lọc thời gian -->
+                        <Grid Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="DASHBOARD" FontSize="15" FontWeight="Bold" Foreground="#1E293B" VerticalAlignment="Center"/>
+                                <TextBlock Text="{Binding PeriodRangeDisplay, StringFormat='{}Thời gian: {0}'}" FontSize="12" Foreground="#64748B" Margin="0,4,0,0"/>
+                            </StackPanel>
+
+                            <!-- Bộ lọc ngày / tháng / năm / tất cả -->
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="Kỳ thống kê:" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#334155" Margin="0,0,8,0"/>
+                                <ComboBox ItemsSource="{Binding PeriodOptions}" SelectedItem="{Binding SelectedPeriod}" Width="150" Height="34" Padding="8,4" VerticalContentAlignment="Center"/>
+                                <Button Command="{Binding RefreshCommand}" Content="🔄 Làm mới" Style="{StaticResource PrimaryButton}" Margin="8,0,0,0" Height="34" Padding="12,0"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <Separator Grid.Row="1" Background="#E2E8F0" Margin="0,4"/>
+
+                        <!-- Lưới thẻ chỉ số KPI Dashboard Realtime -->
+                        <Grid Grid.Row="2">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="10"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="10"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="10"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- KPI 1: Doanh Thu Kỳ Chọn -->
+                            <Border Grid.Row="0" Grid.Column="0" Background="#1E293B" CornerRadius="8" Padding="14">
+                                <StackPanel>
+                                    <TextBlock Text="💰 TỔNG DOANH THU KỲ NÀY" FontSize="11" FontWeight="Bold" Foreground="#94A3B8"/>
+                                    <TextBlock Text="{Binding TotalHotelRevenue, Converter={StaticResource CurrencyConv}}" FontSize="18" FontWeight="Bold" Foreground="#F59E0B" Margin="0,6,0,2"/>
+                                    <TextBlock Text="{Binding TotalTransactions, StringFormat='{}Tổng {0} giao dịch hoàn tất'}" FontSize="11" Foreground="#CBD5E1"/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- KPI 2: Tỷ Lệ Lấp Đầy Phòng -->
+                            <Border Grid.Row="0" Grid.Column="2" Background="#0284C7" CornerRadius="8" Padding="14">
+                                <StackPanel>
+                                    <TextBlock Text="🛏️ TỶ LỆ LẤP ĐẦY PHÒNG" FontSize="11" FontWeight="Bold" Foreground="#BAE6FD"/>
+                                    <TextBlock Text="{Binding OccupancyRate, StringFormat='{}{0}%'}" FontSize="18" FontWeight="Bold" Foreground="White" Margin="0,6,0,2"/>
+                                    <TextBlock Text="{Binding OccupiedRoomsCount, StringFormat='{}Đang ở: {0} / 25 phòng'}" FontSize="11" Foreground="#E0F2FE"/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- KPI 3: Tình Trạng Phòng Khách Sạn -->
+                            <Border Grid.Row="0" Grid.Column="4" Background="#059669" CornerRadius="8" Padding="14">
+                                <StackPanel>
+                                    <TextBlock Text="🏨 TÌNH TRẠNG PHÒNG HIỆN TẠI" FontSize="11" FontWeight="Bold" Foreground="#A7F3D0"/>
+                                    <StackPanel Orientation="Horizontal" Margin="0,6,0,2">
+                                        <TextBlock Text="{Binding AvailableRoomsCount, StringFormat='{}Trống: {0}'}" FontSize="13" FontWeight="Bold" Foreground="White" Margin="0,0,10,0"/>
+                                        <TextBlock Text="{Binding CleaningRoomsCount, StringFormat='{}Dọn: {0}'}" FontSize="13" FontWeight="Bold" Foreground="#FEF08A" Margin="0,0,10,0"/>
+                                        <TextBlock Text="{Binding MaintenanceRoomsCount, StringFormat='{}Bảo trì: {0}'}" FontSize="13" FontWeight="Bold" Foreground="#FECACA"/>
+                                    </StackPanel>
+                                    <TextBlock Text="Sơ đồ 5 tầng khách sạn" FontSize="11" Foreground="#D1FAE5"/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- KPI 4: Xe Cho Thuê -->
+                            <Border Grid.Row="2" Grid.Column="0" Background="#F8FAFC" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="8" Padding="12">
+                                <StackPanel>
+                                    <TextBlock Text="🛵 HIỆU SUẤT CHO THUÊ XE" FontSize="11" FontWeight="Bold" Foreground="#475569"/>
+                                    <StackPanel Orientation="Horizontal" Margin="0,4,0,2">
+                                        <TextBlock Text="{Binding RentedVehiclesCount, StringFormat='{}Đang thuê: {0}'}" FontSize="13" FontWeight="Bold" Foreground="#D97706" Margin="0,0,10,0"/>
+                                        <TextBlock Text="{Binding AvailableVehiclesCount, StringFormat='{}Sẵn sàng: {0}'}" FontSize="13" FontWeight="Bold" Foreground="#059669"/>
+                                    </StackPanel>
+                                    <TextBlock Text="{Binding TotalVehiclesCount, StringFormat='{}Tổng đội xe: {0} chiếc'}" FontSize="11" Foreground="#64748B"/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- KPI 5: Cho Thuê Sảnh & Sự Kiện -->
+                            <Border Grid.Row="2" Grid.Column="2" Background="#F8FAFC" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="8" Padding="12">
+                                <StackPanel>
+                                    <TextBlock Text="🏛️ CHO THUÊ SẢNH &amp; SỰ KIỆN" FontSize="11" FontWeight="Bold" Foreground="#475569"/>
+                                    <StackPanel Orientation="Horizontal" Margin="0,4,0,2">
+                                        <TextBlock Text="{Binding ActiveEventsTodayCount, StringFormat='{}Sự kiện hôm nay: {0}'}" FontSize="13" FontWeight="Bold" Foreground="#7C3AED"/>
+                                    </StackPanel>
+                                    <TextBlock Text="{Binding TotalEventSpacesCount, StringFormat='{}Tổng cộng: {0} khu vực sảnh &amp; hội nghị'}" FontSize="11" Foreground="#64748B"/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- KPI 6: Dịch Vụ Giặt Ủi Cao Cấp -->
+                            <Border Grid.Row="2" Grid.Column="4" Background="#F8FAFC" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="8" Padding="12">
+                                <StackPanel>
+                                    <TextBlock Text="🧺 DỊCH VỤ GIẶT ỦI CAO CẤP" FontSize="11" FontWeight="Bold" Foreground="#475569"/>
+                                    <StackPanel Orientation="Horizontal" Margin="0,4,0,2">
+                                        <TextBlock Text="{Binding ActiveLaundryOrdersCount, StringFormat='{}Đang giặt: {0} đơn'}" FontSize="13" FontWeight="Bold" Foreground="#DB2777"/>
+                                    </StackPanel>
+                                    <TextBlock Text="{Binding TotalLaundryPartnersCount, StringFormat='{}Liên kết: {0} đối tác giặt sấy'}" FontSize="11" Foreground="#64748B"/>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+                    </Grid>
+                </Border>
+            </Grid>
+
+            <!-- BẢNG PHÂN BỔ DOANH THU CHI TIẾT TỪNG DỊCH VỤ -->
+            <Border Grid.Row="2" Style="{StaticResource CardPanel}" Margin="0,0,0,24">
+                <StackPanel>
+                    <TextBlock Text="1. BẢNG PHÂN BỔ TỔNG DOANH THU THEO TỪNG DỊCH VỤ" FontSize="15" FontWeight="Bold" Foreground="#1E293B" Margin="0,0,0,12"/>
+                    <DataGrid ItemsSource="{Binding RevenueSummaries}" Height="220">
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Header="Màu" Width="60">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Border Width="16" Height="16" CornerRadius="3" Background="{Binding ColorBrush}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="Tên Dịch Vụ" Binding="{Binding ServiceName}" Width="240" FontWeight="SemiBold"/>
+                            <DataGridTextColumn Header="Phân Loại" Binding="{Binding ServiceType}" Width="140"/>
+                            <DataGridTextColumn Header="Số Lượng Giao Dịch" Binding="{Binding TransactionCount}" Width="160"/>
+                            <DataGridTextColumn Header="Doanh Thu Đạt Được" Binding="{Binding TotalRevenue, Converter={StaticResource CurrencyConv}}" Width="200" FontWeight="Bold" Foreground="#D97706"/>
+                            <DataGridTextColumn Header="Tỷ Trọng (%)" Binding="{Binding Percentage, StringFormat='{}{0}%'}" Width="120"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </StackPanel>
+            </Border>
+
+            <!-- Chi tiết các mảng nghiệp vụ (Ăn uống, Xe, Sự kiện, Đối tác giặt ủi) -->
+            <Grid Grid.Row="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="16"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Thống kê ẩm thực & kho -->
+                <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource CardPanel}">
+                    <StackPanel>
+                        <TextBlock Text="2. THỐNG KÊ ẨM THỰC, MÓN BÁN CHẠY &amp; TỒN KHO" FontSize="14" FontWeight="Bold" Foreground="#1E293B" Margin="0,0,0,10"/>
+                        <DataGrid ItemsSource="{Binding FoodStats}" Height="220">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Tên Món / Sản Phẩm" Binding="{Binding FoodName}" Width="180"/>
+                                <DataGridTextColumn Header="Loại" Binding="{Binding FoodType}" Width="140"/>
+                                <DataGridTextColumn Header="Đã Bán" Binding="{Binding TotalQuantitySold}" Width="80" FontWeight="Bold"/>
+                                <DataGridTextColumn Header="Tồn Kho/Suất Còn" Binding="{Binding StockLeft}" Width="110"/>
+                                <DataGridTextColumn Header="Doanh Thu" Binding="{Binding TotalRevenue, Converter={StaticResource CurrencyConv}}" Width="120" Foreground="#2563EB"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Thống kê xe máy & Hư hại -->
+                <Border Grid.Row="0" Grid.Column="2" Style="{StaticResource CardPanel}">
+                    <StackPanel>
+                        <TextBlock Text="3. THỐNG KÊ HIỆU SUẤT THUÊ XE &amp; ĐỘ ƯA CHUỘNG" FontSize="14" FontWeight="Bold" Foreground="#1E293B" Margin="0,0,0,10"/>
+                        <DataGrid ItemsSource="{Binding VehicleStats}" Height="220">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Biển Số" Binding="{Binding LicensePlate}" Width="110" FontWeight="SemiBold"/>
+                                <DataGridTextColumn Header="Tên Xe" Binding="{Binding VehicleName}" Width="160"/>
+                                <DataGridTextColumn Header="Loại" Binding="{Binding VehicleType}" Width="100"/>
+                                <DataGridTextColumn Header="Số Lần Thuê" Binding="{Binding RentalCount}" Width="90" FontWeight="Bold"/>
+                                <DataGridTextColumn Header="Doanh Thu" Binding="{Binding TotalRevenue, Converter={StaticResource CurrencyConv}}" Width="120" Foreground="#059669"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Thống kê sảnh sự kiện & Hư hại -->
+                <Border Grid.Row="2" Grid.Column="0" Style="{StaticResource CardPanel}">
+                    <StackPanel>
+                        <TextBlock Text="4. THỐNG KÊ SỰ KIỆN &amp; HƯ HẠI TRANG THIẾT BỊ" FontSize="14" FontWeight="Bold" Foreground="#1E293B" Margin="0,0,0,10"/>
+                        <DataGrid ItemsSource="{Binding EventSpaceStats}" Height="220">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Khu Vực Sảnh/Phòng" Binding="{Binding SpaceName}" Width="180"/>
+                                <DataGridTextColumn Header="Số Lần Thuê" Binding="{Binding BookingCount}" Width="90" FontWeight="Bold"/>
+                                <DataGridTextColumn Header="Doanh Thu" Binding="{Binding TotalRevenue, Converter={StaticResource CurrencyConv}}" Width="130" Foreground="#7C3AED"/>
+                                <DataGridTextColumn Header="Ghi Chú Hư Hại Thiết Bị" Binding="{Binding DamageReport}" Width="200"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </StackPanel>
+                </Border>
+
+                <!-- Thống kê hoa hồng đối tác giặt ủi -->
+                <Border Grid.Row="2" Grid.Column="2" Style="{StaticResource CardPanel}">
+                    <StackPanel>
+                        <TextBlock Text="5. THỐNG KÊ ĐỐI TÁC GIẶT ỦI NGOÀI &amp; ĂN CHIA" FontSize="14" FontWeight="Bold" Foreground="#1E293B" Margin="0,0,0,10"/>
+                        <DataGrid ItemsSource="{Binding LaundryPartnerStats}" Height="220">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Tên Đối Tác" Binding="{Binding PartnerName}" Width="170"/>
+                                <DataGridTextColumn Header="Số Đơn" Binding="{Binding OrderCount}" Width="70"/>
+                                <DataGridTextColumn Header="Tổng Kg" Binding="{Binding TotalWeightKg, StringFormat='{}{0} Kg'}" Width="80"/>
+                                <DataGridTextColumn Header="Hoa Hồng KS" Binding="{Binding HotelCommission, Converter={StaticResource CurrencyConv}}" Width="120" FontWeight="Bold" Foreground="#D97706"/>
+                                <DataGridTextColumn Header="Trả Đối Tác" Binding="{Binding PartnerPayout, Converter={StaticResource CurrencyConv}}" Width="120"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Grid>
+    </ScrollViewer>
+</UserControl>

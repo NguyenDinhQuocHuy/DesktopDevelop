@@ -1,0 +1,163 @@
+<UserControl x:Class="QuanLyDichVuKhachSan.Views.CustomerListView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="850" d:DesignWidth="1150"
+             UseLayoutRounding="True"
+             SnapsToDevicePixels="True"
+             TextOptions.TextFormattingMode="Display"
+             TextOptions.TextRenderingMode="ClearType"
+             TextOptions.TextHintingMode="Fixed">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Grid Grid.Row="0" Margin="0,0,0,14">
+            <TextBlock Text="👤 QUẢN TRỊ DANH SÁCH KHÁCH HÀNG" FontSize="20" FontWeight="Bold" Foreground="#1E293B"/>
+        </Grid>
+
+        <!-- Bộ lọc & Thống kê nhanh (Khung to, chữ to rõ ràng) -->
+        <Grid Grid.Row="1" Margin="0,0,0,14">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2.6*"/>
+                <ColumnDefinition Width="14"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="12"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="12"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Khung tìm kiếm & Bộ lọc nâng cao (To rõ, dễ nhìn) -->
+            <Border Grid.Column="0" Style="{StaticResource CardPanel}" Padding="16,14">
+                <StackPanel>
+                    <!-- Hàng 1: Thời gian & Chọn khoảng ngày -->
+                    <Grid Margin="0,0,0,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="Thời gian:" FontSize="13" FontWeight="Bold" Foreground="#475569" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                        <Grid Grid.Column="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,12,0">
+                                <RadioButton Content="📅 Hôm Nay" Command="{Binding SetTimeFilterCommand}" CommandParameter="Today" IsChecked="True" FontWeight="Bold" FontSize="12.5" Foreground="#2563EB" Margin="0,0,12,0" VerticalAlignment="Center"/>
+                                <RadioButton Content="👥 Tất Cả" Command="{Binding SetTimeFilterCommand}" CommandParameter="All" FontWeight="SemiBold" FontSize="12.5" Foreground="#475569" Margin="0,0,12,0" VerticalAlignment="Center"/>
+                                <RadioButton Content="⏱️ Khoảng Ngày" Command="{Binding SetTimeFilterCommand}" CommandParameter="Custom" FontWeight="SemiBold" FontSize="12.5" Foreground="#059669" VerticalAlignment="Center"/>
+                            </StackPanel>
+
+                            <!-- DatePicker Từ ngày - Đến ngày -->
+                            <Grid Grid.Column="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="Từ:" FontSize="12" Foreground="#64748B" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                                <DatePicker Grid.Column="1" SelectedDate="{Binding FromDate}" Height="32" FontSize="12" Margin="0,0,8,0"/>
+                                <TextBlock Grid.Column="2" Text="Đến:" FontSize="12" Foreground="#64748B" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                                <DatePicker Grid.Column="3" SelectedDate="{Binding ToDate}" Height="32" FontSize="12"/>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+
+                    <!-- Hàng 2: Phân loại + Mục sắp xếp / lọc theo Họ Tên / Phòng -->
+                    <Grid Margin="0,0,0,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="20"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Phân loại -->
+                        <TextBlock Grid.Column="0" Text="Phân loại:" FontSize="13" FontWeight="Bold" Foreground="#475569" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                            <RadioButton Content="Tất Cả" Command="{Binding SetTypeFilterCommand}" CommandParameter="All" IsChecked="True" FontWeight="SemiBold" FontSize="12.5" Margin="0,0,12,0" VerticalAlignment="Center"/>
+                            <RadioButton Content="🏨 Lưu Trú" Command="{Binding SetTypeFilterCommand}" CommandParameter="Resident" FontWeight="SemiBold" FontSize="12.5" Foreground="#0284C7" Margin="0,0,12,0" VerticalAlignment="Center"/>
+                            <RadioButton Content="🚶 Vãng Lai" Command="{Binding SetTypeFilterCommand}" CommandParameter="WalkIn" FontWeight="SemiBold" FontSize="12.5" Foreground="#D97706" VerticalAlignment="Center"/>
+                        </StackPanel>
+
+                        <!-- Lọc theo Họ tên / Phòng (Mặc định Họ tên) -->
+                        <TextBlock Grid.Column="3" Text="Lọc theo:" FontSize="13" FontWeight="Bold" Foreground="#475569" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                        <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center">
+                            <RadioButton Content="🔤 Họ Tên (A-Z)" Command="{Binding SetSortByCommand}" CommandParameter="Name" IsChecked="True" FontWeight="Bold" FontSize="12.5" Foreground="#2563EB" Margin="0,0,14,0" VerticalAlignment="Center"/>
+                            <RadioButton Content="🚪 Số Phòng" Command="{Binding SetSortByCommand}" CommandParameter="Room" FontWeight="SemiBold" FontSize="12.5" Foreground="#7C3AED" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Hàng 3: Tìm kiếm lớn, rõ ràng -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="🔍 Tìm kiếm:" FontSize="13" FontWeight="Bold" Foreground="#475569" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                        <TextBox Grid.Column="1" Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}" 
+                                 Style="{StaticResource ModernTextBox}" Height="34" FontSize="13"
+                                 ToolTip="Nhập số phòng (VD: 102), họ tên khách hàng, số điện thoại, CCCD..."/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- Stat Card 1: Tổng khách -->
+            <Border Grid.Column="2" Style="{StaticResource StatCard}" Background="#F8FAFC" BorderBrush="#CBD5E1" BorderThickness="1" Padding="14,12">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="TỔNG" FontSize="12" FontWeight="Bold" Foreground="#475569"/>
+                    <TextBlock Text="{Binding TotalFilteredCount, StringFormat='{}{0} Khách'}" FontSize="22" FontWeight="Bold" Foreground="#1E293B" Margin="0,4,0,0"/>
+                    <TextBlock Text="Theo bộ lọc hiện tại" FontSize="10.5" Foreground="#94A3B8" Margin="0,2,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Stat Card 2: Khách lưu trú -->
+            <Border Grid.Column="4" Style="{StaticResource StatCard}" Background="#EFF6FF" BorderBrush="#BFDBFE" BorderThickness="1" Padding="14,12">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="KHÁCH LƯU TRÚ" FontSize="11" FontWeight="Bold" Foreground="#1E40AF"/>
+                    <TextBlock Text="{Binding ResidentCount, StringFormat='{}{0} Khách'}" FontSize="20" FontWeight="Bold" Foreground="#2563EB" Margin="0,4,0,0"/>
+                    <TextBlock Text="Đang ở phòng KS" FontSize="10.5" Foreground="#60A5FA" Margin="0,2,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Stat Card 3: Khách vãng lai -->
+            <Border Grid.Column="6" Style="{StaticResource StatCard}" Background="#FFFBEB" BorderBrush="#FDE68A" BorderThickness="1" Padding="14,12">
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="KHÁCH VÃNG LAI" FontSize="11" FontWeight="Bold" Foreground="#B45309"/>
+                    <TextBlock Text="{Binding WalkInCount, StringFormat='{}{0} Khách'}" FontSize="20" FontWeight="Bold" Foreground="#D97706" Margin="0,4,0,0"/>
+                    <TextBlock Text="Dùng dịch vụ ngoài" FontSize="10.5" Foreground="#FBBF24" Margin="0,2,0,0"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- Bảng danh bạ hồ sơ khách hàng (BỎ CỘT MÃ #) -->
+        <Border Grid.Row="2" Style="{StaticResource CardPanel}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Text="📋 BẢNG DANH BẠ HỒ SƠ KHÁCH HÀNG" FontSize="15" FontWeight="Bold" Foreground="#1E293B" Margin="0,0,0,12"/>
+                <DataGrid Grid.Row="1" ItemsSource="{Binding FilteredCustomers}" IsReadOnly="True" AutoGenerateColumns="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Họ Và Tên" Binding="{Binding FullName}" Width="180" FontWeight="Bold"/>
+                        <DataGridTextColumn Header="Phân Loại" Binding="{Binding CustomerTypeDisplay}" Width="130" FontWeight="SemiBold"/>
+                        <DataGridTextColumn Header="Phòng" Binding="{Binding RoomNumberDisplay}" Width="120" FontWeight="Bold" Foreground="#2563EB"/>
+                        <DataGridTextColumn Header="Số Điện Thoại" Binding="{Binding PhoneNumber}" Width="135"/>
+                        <DataGridTextColumn Header="Số CCCD / Hộ Chiếu" Binding="{Binding IdentityCard}" Width="150"/>
+                        <DataGridTextColumn Header="Ghi Chú &amp; Dịch Vụ" Binding="{Binding Note}" Width="*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

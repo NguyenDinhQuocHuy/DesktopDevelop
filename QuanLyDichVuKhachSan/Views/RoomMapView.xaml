@@ -1,0 +1,603 @@
+<UserControl x:Class="QuanLyDichVuKhachSan.Views.RoomMapView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="800" d:DesignWidth="1200"
+             Background="#F1F5F9"
+             UseLayoutRounding="True"
+             SnapsToDevicePixels="True"
+             TextOptions.TextFormattingMode="Display"
+             TextOptions.TextRenderingMode="ClearType"
+             TextOptions.TextHintingMode="Fixed">
+
+    <Grid Margin="20">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1.15*"/> <!-- LEFT: Sơ đồ 5 tầng phòng -->
+            <ColumnDefinition Width="16"/>     <!-- Spacing -->
+            <ColumnDefinition Width="1.0*"/>  <!-- RIGHT: Chi tiết khách hàng & Dịch vụ & Xuất Bill -->
+        </Grid.ColumnDefinitions>
+
+        <!-- ========================================================================= -->
+        <!-- LEFT PANEL: SƠ ĐỒ 5 TẦNG PHÒNG (25 PHÒNG)                                -->
+        <!-- ========================================================================= -->
+        <Border Grid.Column="0" Background="White" CornerRadius="16" BorderBrush="#E2E8F0" BorderThickness="1" Padding="20">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="15" ShadowDepth="3" Opacity="0.05" Color="#000000"/>
+            </Border.Effect>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/> <!-- Title & Legend -->
+                    <RowDefinition Height="Auto"/> <!-- Filter buttons -->
+                    <RowDefinition Height="*"/>    <!-- Room Grid (5 floors) -->
+                </Grid.RowDefinitions>
+
+                <!-- 1. Header & Status Legend -->
+                <Grid Grid.Row="0" Margin="0,0,0,14">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="🗺️ SƠ ĐỒ PHÒNG KHÁCH SẠN" FontSize="18" FontWeight="Bold" Foreground="#1E293B" VerticalAlignment="Center"/>
+
+                    <!-- Status Legend -->
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Border Background="#10B981" CornerRadius="4" Width="10" Height="10" Margin="0,0,4,0"/>
+                        <TextBlock Text="Trống" FontSize="11" Foreground="#64748B" Margin="0,0,12,0"/>
+
+                        <Border Background="#2563EB" CornerRadius="4" Width="10" Height="10" Margin="0,0,4,0"/>
+                        <TextBlock Text="Đang ở" FontSize="11" Foreground="#64748B" Margin="0,0,12,0"/>
+
+                        <Border Background="#F59E0B" CornerRadius="4" Width="10" Height="10" Margin="0,0,4,0"/>
+                        <TextBlock Text="Dọn dẹp" FontSize="11" Foreground="#64748B" Margin="0,0,12,0"/>
+
+                        <Border Background="#EF4444" CornerRadius="4" Width="10" Height="10" Margin="0,0,4,0"/>
+                        <TextBlock Text="Bảo trì" FontSize="11" Foreground="#64748B"/>
+                    </StackPanel>
+                </Grid>
+
+                <!-- 2. Status Filter Buttons -->
+                <WrapPanel Grid.Row="1" Margin="0,0,0,14">
+                    <Button Content="{Binding TotalRoomsCount, StringFormat='Tất cả ({0})'}" Command="{Binding FilterCommand}" CommandParameter="Tất cả"
+                            Height="32" Padding="12,0" Margin="0,0,6,6"
+                            Background="#F1F5F9" Foreground="#1E293B" FontSize="12" FontWeight="SemiBold"
+                            BorderBrush="#CBD5E1" BorderThickness="1" Cursor="Hand">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="8"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+
+                    <Button Content="Đang ở" Command="{Binding FilterCommand}" CommandParameter="Đang ở"
+                            Height="32" Padding="14,0" Margin="0,0,6,6"
+                            Background="#EFF6FF" Foreground="#2563EB" FontSize="12" FontWeight="SemiBold"
+                            BorderBrush="#BFDBFE" BorderThickness="1" Cursor="Hand">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="8"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+
+                    <Button Content="Trống" Command="{Binding FilterCommand}" CommandParameter="Trống"
+                            Height="32" Padding="14,0" Margin="0,0,6,6"
+                            Background="#ECFDF5" Foreground="#059669" FontSize="12" FontWeight="SemiBold"
+                            BorderBrush="#A7F3D0" BorderThickness="1" Cursor="Hand">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="8"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+
+                    <Button Content="Dọn dẹp" Command="{Binding FilterCommand}" CommandParameter="Dọn dẹp"
+                            Height="32" Padding="14,0" Margin="0,0,6,6"
+                            Background="#FFFBEB" Foreground="#D97706" FontSize="12" FontWeight="SemiBold"
+                            BorderBrush="#FDE68A" BorderThickness="1" Cursor="Hand">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="8"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+
+                    <Button Content="Bảo trì" Command="{Binding FilterCommand}" CommandParameter="Bảo trì"
+                            Height="32" Padding="14,0" Margin="0,0,6,6"
+                            Background="#FEF2F2" Foreground="#DC2626" FontSize="12" FontWeight="SemiBold"
+                            BorderBrush="#FECACA" BorderThickness="1" Cursor="Hand">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="8"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+                </WrapPanel>
+
+                <!-- 3. Room Grid (Hierarchical 5 floors x 4 rooms) -->
+                <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+                    <ItemsControl ItemsSource="{Binding FloorGroups}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="#F8FAFC" CornerRadius="12" BorderBrush="#E2E8F0" BorderThickness="1" Padding="12,10" Margin="0,0,0,14">
+                                    <StackPanel>
+                                        <!-- Floor Header Bar -->
+                                        <Grid Margin="2,0,2,8">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="{Binding FloorName}" FontSize="13.5" FontWeight="Bold" Foreground="#D97706"/>
+                                                <TextBlock Text="{Binding Rooms.Count, StringFormat='{} ({0} phòng)'}" FontSize="11.5" FontWeight="SemiBold" Foreground="#64748B" VerticalAlignment="Center"/>
+                                            </StackPanel>
+                                        </Grid>
+
+                                        <!-- 4 Rooms Row in UniformGrid -->
+                                        <ItemsControl ItemsSource="{Binding Rooms}">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <UniformGrid Columns="4"/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Button Command="{Binding DataContext.SelectRoomCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                            CommandParameter="{Binding}"
+                                                            PreviewMouseRightButtonDown="RoomButton_PreviewMouseRightButtonDown"
+                                                            Margin="4,4"
+                                                            Height="114"
+                                                            Cursor="Hand"
+                                                            Background="White"
+                                                            BorderThickness="1.5">
+                                                        <!-- Right-Click Context Menu -->
+                                                        <Button.ContextMenu>
+                                                            <ContextMenu Background="White" BorderBrush="#E2E8F0" Foreground="#1E293B" FontSize="12">
+                                                                <MenuItem Header="🔑 Nhận Phòng (Check-in)" 
+                                                                          Click="MenuCheckIn_Click"
+                                                                          IsEnabled="{Binding CanCheckIn}"/>
+
+                                                                <MenuItem Header="🚪 Trả Phòng (Check-out &amp; Quyết toán)" 
+                                                                          Click="MenuCheckOut_Click"
+                                                                          IsEnabled="{Binding CanCheckOut}"/>
+
+                                                                <MenuItem Header="⏰ Gia Hạn Thời Gian Ở" 
+                                                                          Click="MenuExtendStay_Click"
+                                                                          IsEnabled="{Binding IsOccupied}"/>
+
+                                                                <Separator Background="#E2E8F0"/>
+
+                                                                <MenuItem Header="✨ Dọn Dẹp Xong (Sẵn Sàng)" 
+                                                                          Click="MenuFinishCleaning_Click"
+                                                                          IsEnabled="{Binding IsCleaning}"/>
+
+                                                                <Separator Background="#E2E8F0"/>
+
+                                                                <MenuItem Header="🔧 Báo Hỏng / Bảo Trì" 
+                                                                          Click="MenuSetMaintenance_Click"
+                                                                          IsEnabled="{Binding CanSetMaintenance}"/>
+
+                                                                <MenuItem Header="🛠️ Bảo Trì Xong (Hoàn Tất)" 
+                                                                          Click="MenuFinishMaintenance_Click"
+                                                                          IsEnabled="{Binding IsMaintenance}"/>
+                                                            </ContextMenu>
+                                                        </Button.ContextMenu>
+
+                                                        <Button.Style>
+                                                            <Style TargetType="Button">
+                                                                <Setter Property="BorderBrush" Value="#CBD5E1"/>
+                                                                <Setter Property="Template">
+                                                                    <Setter.Value>
+                                                                        <ControlTemplate TargetType="Button">
+                                                                            <Border Background="{TemplateBinding Background}" 
+                                                                                    BorderBrush="{TemplateBinding BorderBrush}" 
+                                                                                    BorderThickness="{TemplateBinding BorderThickness}" 
+                                                                                    CornerRadius="12" 
+                                                                                    Padding="10,8">
+                                                                                <ContentPresenter/>
+                                                                            </Border>
+                                                                        </ControlTemplate>
+                                                                    </Setter.Value>
+                                                                </Setter>
+                                                                <Style.Triggers>
+                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                        <Setter Property="Background" Value="#F8FAFC"/>
+                                                                        <Setter Property="BorderBrush" Value="#D97706"/>
+                                                                    </Trigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Button.Style>
+
+                                                        <!-- Room Card Visual Content -->
+                                                        <Grid>
+                                                            <Grid.RowDefinitions>
+                                                                <RowDefinition Height="Auto"/>
+                                                                <RowDefinition Height="*"/>
+                                                                <RowDefinition Height="Auto"/>
+                                                            </Grid.RowDefinitions>
+
+                                                            <!-- Room Header: Number, Parking Badge & Status Dot -->
+                                                            <Grid Grid.Row="0">
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="*"/>
+                                                                    <ColumnDefinition Width="Auto"/>
+                                                                    <ColumnDefinition Width="Auto"/>
+                                                                </Grid.ColumnDefinitions>
+                                                                <TextBlock Grid.Column="0" Text="{Binding RoomNumber}" FontSize="17" FontWeight="Bold" Foreground="#0F172A"/>
+
+                                                                <!-- Biểu tượng Parking (chữ P) khi phòng có gửi xe ở bãi -->
+                                                                <Border Grid.Column="1" 
+                                                                        Visibility="{Binding HasParkedVehicle, Converter={StaticResource BoolToVis}}"
+                                                                        Background="#2563EB" CornerRadius="4" Width="18" Height="18" Margin="0,0,6,0" VerticalAlignment="Center"
+                                                                        ToolTip="{Binding ParkedVehicleInfo, StringFormat='{}Xe khách gửi tại bãi đỗ: {0}'}">
+                                                                    <TextBlock Text="P" FontSize="11" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                </Border>
+
+                                                                <!-- Status Indicator Dot -->
+                                                                <Ellipse Grid.Column="2" Width="12" Height="12" Fill="{Binding StatusColorBrush}" VerticalAlignment="Center"/>
+                                                            </Grid>
+
+                                                            <!-- Room Body: Customer Name & Phone -->
+                                                            <StackPanel Grid.Row="1" VerticalAlignment="Center" Margin="0,4">
+                                                                <TextBlock Text="{Binding CustomerName}" FontSize="13" FontWeight="Bold" Foreground="#1E293B" TextTrimming="CharacterEllipsis"/>
+                                                                <TextBlock Text="{Binding PhoneNumber}" FontSize="11.5" FontWeight="SemiBold" Foreground="#64748B" Margin="0,2,0,0"/>
+                                                            </StackPanel>
+
+                                                            <!-- Room Footer: Status Label & Service Count -->
+                                                            <Grid Grid.Row="2">
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="*"/>
+                                                                    <ColumnDefinition Width="Auto"/>
+                                                                </Grid.ColumnDefinitions>
+                                                                <Border Background="{Binding StatusColorBrush}" CornerRadius="5" Padding="8,3" HorizontalAlignment="Left">
+                                                                    <TextBlock Text="{Binding StatusDisplay}" FontSize="11" FontWeight="Bold" Foreground="White"/>
+                                                                </Border>
+                                                                <TextBlock Grid.Column="1" Text="{Binding RoomType}" FontSize="11" FontWeight="SemiBold" Foreground="#64748B" VerticalAlignment="Center"/>
+                                                            </Grid>
+                                                        </Grid>
+                                                    </Button>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+        </Border>
+
+        <!-- ========================================================================= -->
+        <!-- RIGHT PANEL: CHI TIẾT KHÁCH HÀNG & DỊCH VỤ SỬ DỤNG & XUẤT BILL           -->
+        <!-- ========================================================================= -->
+        <Border Grid.Column="2" Background="White" CornerRadius="16" BorderBrush="#E2E8F0" BorderThickness="1" Padding="20">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="15" ShadowDepth="3" Opacity="0.05" Color="#000000"/>
+            </Border.Effect>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/> <!-- Customer Info Card -->
+                    <RowDefinition Height="*"/>    <!-- Service Items DataGrid -->
+                    <RowDefinition Height="Auto"/> <!-- Bottom Payment & Bill Bar -->
+                </Grid.RowDefinitions>
+
+                <!-- 1. Customer & Room Info Card (Có Chế Độ Chỉnh Sửa Trực Tiếp) -->
+                <Border Grid.Row="0" Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="12" Padding="16" Margin="0,0,0,16">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Card Header: Room Number & Action Buttons -->
+                        <Grid Grid.Row="0" Margin="0,0,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Room Number and Type -->
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding SelectedRoom.RoomNumber, FallbackValue='P.---'}" FontSize="20" FontWeight="Bold" Foreground="#D97706"/>
+                                <TextBlock Text="{Binding SelectedRoom.RoomType, FallbackValue='(Chưa chọn phòng)', StringFormat='{} - {0}'}" FontSize="13" Foreground="#64748B" VerticalAlignment="Center" Margin="6,0,0,0"/>
+                            </StackPanel>
+
+                            <!-- Right Header Controls: Status Badge + Edit/Save Buttons -->
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                <!-- Status Badge -->
+                                <Border CornerRadius="8" Padding="10,5" Background="White" BorderBrush="{Binding SelectedRoom.StatusColorBrush}" BorderThickness="1" Margin="0,0,8,0">
+                                    <TextBlock Text="{Binding SelectedRoom.StatusDisplay, FallbackValue='Trống'}" FontSize="12" FontWeight="Bold" Foreground="{Binding SelectedRoom.StatusColorBrush}"/>
+                                </Border>
+
+                                <!-- Edit Button (Khi chưa ấn sửa) -->
+                                <Button Command="{Binding StartEditGuestInfoCommand}" 
+                                        Visibility="{Binding SelectedRoom.IsNotEditing, Converter={StaticResource BoolToVis}}"
+                                        IsEnabled="{Binding SelectedRoom.IsOccupied}"
+                                        Content="✏️ Chỉnh sửa" 
+                                        Height="30" Padding="10,0" FontSize="11.5"
+                                        Style="{StaticResource OutlineButton}"/>
+
+                                <!-- Save & Cancel Buttons (Khi đang trong chế độ chỉnh sửa) -->
+                                <StackPanel Orientation="Horizontal" Visibility="{Binding SelectedRoom.IsEditing, Converter={StaticResource BoolToVis}}">
+                                    <Button Command="{Binding SaveGuestInfoCommand}" 
+                                            Content="💾 Lưu" 
+                                            Height="30" Padding="12,0" FontSize="11.5"
+                                            Style="{StaticResource GreenButton}" Margin="0,0,6,0"/>
+                                    <Button Command="{Binding CancelEditGuestInfoCommand}" 
+                                            Content="❌ Hủy" 
+                                            Height="30" Padding="10,0" FontSize="11.5"
+                                            Style="{StaticResource OutlineButton}"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Card Body (Read-only View vs In-Place Edit View) -->
+                        <Grid Grid.Row="1">
+                            <!-- READ-ONLY VIEW -->
+                            <StackPanel Visibility="{Binding SelectedRoom.IsNotEditing, Converter={StaticResource BoolToVis}}">
+                                <!-- Guest Name -->
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                                    <TextBlock Text="👤 Khách lưu trú: " FontSize="12.5" Foreground="#64748B"/>
+                                    <TextBlock Text="{Binding SelectedRoom.CustomerName, FallbackValue='(Trống / Không có khách)'}" FontSize="13" FontWeight="Bold" Foreground="#1E293B"/>
+                                </StackPanel>
+
+                                <!-- Phone & CCCD -->
+                                <Grid Margin="0,0,0,4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                        <TextBlock Text="📞 SĐT: " FontSize="12" Foreground="#64748B"/>
+                                        <TextBlock Text="{Binding SelectedRoom.PhoneNumber, FallbackValue='---'}" FontSize="12" FontWeight="SemiBold" Foreground="#334155"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                        <TextBlock Text="CCCD / Passport: " FontSize="12" Foreground="#64748B"/>
+                                        <TextBlock Text="{Binding SelectedRoom.IdentityCard, FallbackValue='---'}" FontSize="12" Foreground="#334155"/>
+                                    </StackPanel>
+                                </Grid>
+
+                                <!-- Check-in & Check-out -->
+                                <Grid Margin="0,0,0,4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                        <TextBlock Text="📥 Nhận phòng: " FontSize="12" Foreground="#64748B"/>
+                                        <TextBlock Text="{Binding SelectedRoom.CheckInDisplay}" FontSize="12" Foreground="#059669"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                        <TextBlock Text="📤 Trả phòng: " FontSize="12" Foreground="#64748B"/>
+                                        <TextBlock Text="{Binding SelectedRoom.CheckOutDisplay}" FontSize="12" FontWeight="SemiBold" Foreground="#D97706"/>
+                                    </StackPanel>
+                                </Grid>
+
+                                <!-- Note -->
+                                <TextBlock Text="{Binding SelectedRoom.Note, FallbackValue='Không có ghi chú', StringFormat='{}📝 Ghi chú: {0}'}" FontSize="11.5" Foreground="#64748B" FontStyle="Italic" Margin="0,0,0,6"/>
+
+                                <!-- Parked Vehicle Banner -->
+                                <Border Background="#EFF6FF" BorderBrush="#93C5FD" BorderThickness="1.5" CornerRadius="8" Padding="10,6" Margin="0,4,0,4"
+                                        Visibility="{Binding SelectedRoom.HasParkedVehicle, Converter={StaticResource BoolToVis}}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Border Background="#2563EB" CornerRadius="5" Padding="6,3" Margin="0,0,8,0" VerticalAlignment="Center">
+                                            <TextBlock Text="🅿 BÃI ĐỖ XE" FontSize="11" FontWeight="Bold" Foreground="White"/>
+                                        </Border>
+                                        <TextBlock Grid.Column="1" Text="{Binding SelectedRoom.ParkedVehicleInfo}" FontSize="12" FontWeight="Bold" Foreground="#1E40AF" TextWrapping="Wrap" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </Border>
+                            </StackPanel>
+
+                            <!-- IN-PLACE EDIT VIEW -->
+                            <StackPanel Visibility="{Binding SelectedRoom.IsEditing, Converter={StaticResource BoolToVis}}">
+                                <Grid Margin="0,0,0,6">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="10"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Customer Name -->
+                                    <StackPanel Grid.Column="0">
+                                        <TextBlock Text="👤 Họ &amp; Tên Khách (*):" FontSize="11.5" FontWeight="SemiBold" Foreground="#334155"/>
+                                        <TextBox Text="{Binding SelectedRoom.CustomerName, UpdateSourceTrigger=PropertyChanged}" 
+                                                 Style="{StaticResource ModernTextBox}" Height="32" VerticalContentAlignment="Center" Margin="0,2,0,0"/>
+                                    </StackPanel>
+
+                                    <!-- Phone Number -->
+                                    <StackPanel Grid.Column="2">
+                                        <TextBlock Text="📞 Số Điện Thoại (*):" FontSize="11.5" FontWeight="SemiBold" Foreground="#334155"/>
+                                        <TextBox Text="{Binding SelectedRoom.PhoneNumber, UpdateSourceTrigger=PropertyChanged}" 
+                                                 Style="{StaticResource ModernTextBox}" Height="32" VerticalContentAlignment="Center" Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                </Grid>
+
+                                <Grid Margin="0,0,0,6">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="10"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- CCCD -->
+                                    <StackPanel Grid.Column="0">
+                                        <TextBlock Text="Số CCCD / Passport:" FontSize="11.5" FontWeight="SemiBold" Foreground="#334155"/>
+                                        <TextBox Text="{Binding SelectedRoom.IdentityCard, UpdateSourceTrigger=PropertyChanged}" 
+                                                 Style="{StaticResource ModernTextBox}" Height="32" VerticalContentAlignment="Center" Margin="0,2,0,0"/>
+                                    </StackPanel>
+
+                                    <!-- Check-out Extension button -->
+                                    <StackPanel Grid.Column="2">
+                                        <TextBlock Text="📤 Thời Gian Trả Phòng:" FontSize="11.5" FontWeight="SemiBold" Foreground="#334155"/>
+                                        <Grid Margin="0,2,0,0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBox Text="{Binding SelectedRoom.CheckOutDisplay, Mode=OneWay}" IsReadOnly="True" Background="#F1F5F9" Height="32" VerticalContentAlignment="Center"/>
+                                            <Button Grid.Column="1" Command="{Binding ExtendStayCommand}" CommandParameter="{Binding SelectedRoom}" 
+                                                    Content="⏰ Đổi giờ" Height="32" Padding="6,0" Style="{StaticResource OutlineButton}" Margin="4,0,0,0"/>
+                                        </Grid>
+                                    </StackPanel>
+                                </Grid>
+
+                                <!-- Note -->
+                                <StackPanel>
+                                    <TextBlock Text="📝 Ghi Chú Lưu Trú:" FontSize="11.5" FontWeight="SemiBold" Foreground="#334155"/>
+                                    <TextBox Text="{Binding SelectedRoom.Note, UpdateSourceTrigger=PropertyChanged}" 
+                                             Style="{StaticResource ModernTextBox}" Height="32" VerticalContentAlignment="Center" Margin="0,2,0,0"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Grid>
+                    </Grid>
+                </Border>
+
+                <!-- 2. Services DataGrid Table -->
+                <Grid Grid.Row="1" Margin="0,0,0,16">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Text="🛎️ DANH SÁCH DỊCH VỤ PHÒNG ĐÃ SỬ DỤNG" FontSize="13" FontWeight="Bold" Foreground="#1E293B" Margin="0,0,0,10"/>
+
+                    <!-- Services DataGrid -->
+                    <DataGrid x:Name="GridRoomServices" Grid.Row="1" 
+                              ItemsSource="{Binding CurrentRoomServices}" 
+                              SelectedItem="{Binding SelectedRoomService, Mode=TwoWay}"
+                              AutoGenerateColumns="False" 
+                              IsReadOnly="True" 
+                              CanUserAddRows="False" 
+                              GridLinesVisibility="Horizontal"
+                              HorizontalGridLinesBrush="#F1F5F9"
+                              Background="White"
+                              BorderThickness="1"
+                              BorderBrush="#E2E8F0"
+                              RowHeight="42"
+                              HeadersVisibility="Column"
+                              FontSize="12">
+                        <DataGrid.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="🔍 Chi Tiết Dịch Vụ &amp; Hóa Đơn" 
+                                          FontWeight="Bold"
+                                          Click="MenuViewServiceDetail_Click"/>
+                            </ContextMenu>
+                        </DataGrid.ContextMenu>
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Setter Property="Background" Value="White"/>
+                                <Setter Property="Foreground" Value="#1E293B"/>
+                                <EventSetter Event="MouseDoubleClick" Handler="ServiceRow_MouseDoubleClick"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#F8FAFC"/>
+                                    </Trigger>
+                                    <DataTrigger Binding="{Binding IsHighlighted}" Value="True">
+                                        <Setter Property="Background" Value="#FEF08A"/>
+                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                    </DataTrigger>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Background" Value="#E0E7FF"/>
+                                        <Setter Property="Foreground" Value="#1E1B4B"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.RowStyle>
+                        <DataGrid.Resources>
+                            <Style TargetType="DataGridColumnHeader">
+                                <Setter Property="Background" Value="#F8FAFC"/>
+                                <Setter Property="Foreground" Value="#475569"/>
+                                <Setter Property="FontWeight" Value="Bold"/>
+                                <Setter Property="Height" Value="36"/>
+                                <Setter Property="Padding" Value="8,0"/>
+                            </Style>
+                        </DataGrid.Resources>
+
+                        <DataGrid.Columns>
+                            <!-- Hạng mục -->
+                            <DataGridTextColumn Header="Loại DV" Binding="{Binding ServiceCategory}" Width="85" FontWeight="SemiBold"/>
+
+                            <!-- Chi tiết -->
+                            <DataGridTemplateColumn Header="Chi Tiết Dịch Vụ" Width="*">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding ServiceName}" FontWeight="SemiBold" Foreground="#1E293B"/>
+                                            <TextBlock Text="{Binding Details}" FontSize="10.5" Foreground="#64748B"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <!-- Số tiền -->
+                            <DataGridTemplateColumn Header="Số Tiền" Width="100">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Amount, StringFormat='{}{0:N0} đ'}" 
+                                                   FontWeight="Bold" 
+                                                   Foreground="#D97706" 
+                                                   HorizontalAlignment="Right" 
+                                                   VerticalAlignment="Center" 
+                                                   Margin="0,0,8,0"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <!-- Trạng thái thanh toán (Badge nhỏ) -->
+                            <DataGridTemplateColumn Header="Trạng Thái" Width="120">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Border Background="{Binding PaymentStatusBg}" CornerRadius="6" Padding="6,3" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding PaymentStatusDisplay}" 
+                                                       FontSize="11" 
+                                                       FontWeight="Bold" 
+                                                       Foreground="{Binding PaymentStatusColor}"/>
+                                        </Border>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+
+                <!-- 3. Bottom Payment & Bill Bar -->
+                <Border Grid.Row="2" Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="12" Padding="16">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Unpaid Amount Summary -->
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="TỔNG DỊCH VỤ CHƯA THANH TOÁN:" FontSize="11" FontWeight="Bold" Foreground="#64748B"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
+                                <TextBlock Text="{Binding TotalUnpaidAmount, StringFormat='{}{0:N0} đ'}" FontSize="22" FontWeight="Bold" Foreground="#DC2626"/>
+                                <TextBlock Text="{Binding TotalPaidAmount, StringFormat='{} (Đã trả: {0:N0} đ)'}" FontSize="12" Foreground="#059669" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                            </StackPanel>
+                            <TextBlock Text="* Chỉ tính chi phí các dịch vụ phát sinh, không gồm tiền phòng" FontSize="10.5" Foreground="#94A3B8" Margin="0,2,0,0"/>
+                        </StackPanel>
+
+                        <!-- Large Payment Button -->
+                        <Button Grid.Column="1" 
+                                Command="{Binding PayAndExportBillCommand}"
+                                Height="48" 
+                                Padding="20,0" 
+                                Style="{StaticResource PrimaryButton}" 
+                                Background="#D97706" 
+                                Cursor="Hand">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="💳" FontSize="16" Margin="0,0,8,0"/>
+                                <TextBlock Text="THANH TOÁN &amp; XUẤT HÓA ĐƠN" FontSize="13" FontWeight="Bold"/>
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>
