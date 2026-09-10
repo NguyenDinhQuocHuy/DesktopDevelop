@@ -1,0 +1,227 @@
+[
+  {
+    "InvoiceId": "HD20260810143001",
+    "CustomerPhone": "0901234567",
+    "CustomerName": "Nguy\u1EC5n V\u0103n An",
+    "PurchaseDate": "2026-08-10T09:08:41.8255447+07:00",
+    "Items": [
+      {
+        "Name": "Paracetamol",
+        "Price": 2000,
+        "Quantity": 5,
+        "TotalPrice": 10000
+      },
+      {
+        "Name": "Smecta",
+        "Price": 5000,
+        "Quantity": 2,
+        "TotalPrice": 10000
+      },
+      {
+        "Name": "Berocca",
+        "Price": 7000,
+        "Quantity": 1,
+        "TotalPrice": 7000
+      }
+    ],
+    "TotalAmount": 27000,
+    "PointsEarned": 27,
+    "DisplayDate": "10/08/2026 09:08:41",
+    "FormattedTotal": "27,000\u0111",
+    "ItemsSummary": "Paracetamol (x5), Smecta (x2), Berocca (x1)"
+  },
+  {
+    "InvoiceId": "HD20260812091522",
+    "CustomerPhone": "0901234567",
+    "CustomerName": "Nguy\u1EC5n V\u0103n An",
+    "PurchaseDate": "2026-08-13T09:08:41.8322984+07:00",
+    "Items": [
+      {
+        "Name": "Amoxicillin",
+        "Price": 5000,
+        "Quantity": 4,
+        "TotalPrice": 20000
+      },
+      {
+        "Name": "Vitamin C",
+        "Price": 2000,
+        "Quantity": 3,
+        "TotalPrice": 6000
+      }
+    ],
+    "TotalAmount": 26000,
+    "PointsEarned": 26,
+    "DisplayDate": "13/08/2026 09:08:41",
+    "FormattedTotal": "26,000\u0111",
+    "ItemsSummary": "Amoxicillin (x4), Vitamin C (x3)"
+  },
+  {
+    "InvoiceId": "HD20260815162045",
+    "CustomerPhone": "0901234567",
+    "CustomerName": "Nguy\u1EC5n V\u0103n An",
+    "PurchaseDate": "2026-08-16T09:08:41.8323035+07:00",
+    "Items": [
+      {
+        "Name": "D\u1EA7u c\u00E1 Omega 3",
+        "Price": 5000,
+        "Quantity": 2,
+        "TotalPrice": 10000
+      },
+      {
+        "Name": "Acetylcysteine",
+        "Price": 4000,
+        "Quantity": 2,
+        "TotalPrice": 8000
+      }
+    ],
+    "TotalAmount": 18000,
+    "PointsEarned": 18,
+    "DisplayDate": "16/08/2026 09:08:41",
+    "FormattedTotal": "18,000\u0111",
+    "ItemsSummary": "D\u1EA7u c\u00E1 Omega 3 (x2), Acetylcysteine (x2)"
+  },
+  {
+    "InvoiceId": "HD20260811100512",
+    "CustomerPhone": "0912345678",
+    "CustomerName": "Tr\u1EA7n Th\u1ECB B\u00ECnh",
+    "PurchaseDate": "2026-08-12T09:08:41.832305+07:00",
+    "Items": [
+      {
+        "Name": "Aspirin",
+        "Price": 1500,
+        "Quantity": 10,
+        "TotalPrice": 15000
+      },
+      {
+        "Name": "Pantoprazole",
+        "Price": 5500,
+        "Quantity": 2,
+        "TotalPrice": 11000
+      }
+    ],
+    "TotalAmount": 26000,
+    "PointsEarned": 26,
+    "DisplayDate": "12/08/2026 09:08:41",
+    "FormattedTotal": "26,000\u0111",
+    "ItemsSummary": "Aspirin (x10), Pantoprazole (x2)"
+  },
+  {
+    "InvoiceId": "HD20260814113000",
+    "CustomerPhone": "0923456789",
+    "CustomerName": "L\u00EA V\u0103n C\u01B0\u1EDDng",
+    "PurchaseDate": "2026-08-15T09:08:41.8323062+07:00",
+    "Items": [
+      {
+        "Name": "Azithromycin",
+        "Price": 8000,
+        "Quantity": 3,
+        "TotalPrice": 24000
+      },
+      {
+        "Name": "Cetirizine",
+        "Price": 2500,
+        "Quantity": 4,
+        "TotalPrice": 10000
+      }
+    ],
+    "TotalAmount": 34000,
+    "PointsEarned": 34,
+    "DisplayDate": "15/08/2026 09:08:41",
+    "FormattedTotal": "34,000\u0111",
+    "ItemsSummary": "Azithromycin (x3), Cetirizine (x4)"
+  },
+  {
+    "InvoiceId": "HD20260808084530",
+    "CustomerPhone": "0956789012",
+    "CustomerName": "V\u0169 Th\u1ECB Hoa",
+    "PurchaseDate": "2026-08-08T09:08:41.8323109+07:00",
+    "Items": [
+      {
+        "Name": "Cefixime",
+        "Price": 12000,
+        "Quantity": 2,
+        "TotalPrice": 24000
+      },
+      {
+        "Name": "Berberin",
+        "Price": 2000,
+        "Quantity": 5,
+        "TotalPrice": 10000
+      }
+    ],
+    "TotalAmount": 34000,
+    "PointsEarned": 34,
+    "DisplayDate": "08/08/2026 09:08:41",
+    "FormattedTotal": "34,000\u0111",
+    "ItemsSummary": "Cefixime (x2), Berberin (x5)"
+  },
+  {
+    "InvoiceId": "HD20260817091237",
+    "CustomerPhone": "0123456789",
+    "CustomerName": "L\u01B0u Ng\u1ECDc B\u1EA1ch",
+    "PurchaseDate": "2026-08-17T09:12:37.5164899+07:00",
+    "Items": [
+      {
+        "Name": "Paracetamol",
+        "Price": 2000,
+        "Quantity": 3,
+        "TotalPrice": 6000
+      },
+      {
+        "Name": "Amoxicillin",
+        "Price": 5000,
+        "Quantity": 1,
+        "TotalPrice": 5000
+      },
+      {
+        "Name": "Cefuroxime",
+        "Price": 10000,
+        "Quantity": 1,
+        "TotalPrice": 10000
+      }
+    ],
+    "TotalAmount": 21000,
+    "PointsEarned": 21,
+    "DisplayDate": "17/08/2026 09:12:37",
+    "FormattedTotal": "21,000\u0111",
+    "ItemsSummary": "Paracetamol (x3), Amoxicillin (x1), Cefuroxime (x1)"
+  },
+  {
+    "InvoiceId": "HD20260817102432",
+    "CustomerPhone": "0901234567",
+    "CustomerName": "Nguy\u1EC5n V\u0103n An",
+    "PurchaseDate": "2026-08-17T10:24:32.8123366+07:00",
+    "Items": [
+      {
+        "Name": "Paracetamol",
+        "Price": 2000,
+        "Quantity": 1,
+        "TotalPrice": 2000
+      }
+    ],
+    "TotalAmount": 2000,
+    "PointsEarned": 2,
+    "DisplayDate": "17/08/2026 10:24:32",
+    "FormattedTotal": "2,000\u0111",
+    "ItemsSummary": "Paracetamol (x1)"
+  },
+  {
+    "InvoiceId": "HD20260817103744",
+    "CustomerPhone": "0901234567",
+    "CustomerName": "Nguy\u1EC5n V\u0103n An",
+    "PurchaseDate": "2026-08-17T10:37:44.3027882+07:00",
+    "Items": [
+      {
+        "Name": "Aspirin",
+        "Price": 1500,
+        "Quantity": 1,
+        "TotalPrice": 1500
+      }
+    ],
+    "TotalAmount": 1500,
+    "PointsEarned": 1,
+    "DisplayDate": "17/08/2026 10:37:44",
+    "FormattedTotal": "1,500\u0111",
+    "ItemsSummary": "Aspirin (x1)"
+  }
+]
