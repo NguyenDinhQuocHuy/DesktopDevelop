@@ -1,0 +1,10 @@
+D:\Study\Desktop\ThucHanh\ChuDe2_LapTrinhGiaoDien\ChuDe2_LapTrinhGiaoDien\TinhTienHocTrungTam\bin\Debug\TinhTienHocTrungTam.exe.config
+D:\Study\Desktop\ThucHanh\ChuDe2_LapTrinhGiaoDien\ChuDe2_LapTrinhGiaoDien\TinhTienHocTrungTam\bin\Debug\TinhTienHocTrungTam.exe
+D:\Study\Desktop\ThucHanh\ChuDe2_LapTrinhGiaoDien\ChuDe2_LapTrinhGiaoDien\TinhTienHocTrungTam\bin\Debug\TinhTienHocTrungTam.pdb
+D:\Study\Desktop\ThucHanh\ChuDe2_LapTrinhGiaoDien\ChuDe2_LapTrinhGiaoDien\TinhTienHocTrungTam\obj\Debug\TinhTienHocTrungTam.csproj.AssemblyReference.cache
+D:\Study\Desktop\ThucHanh\ChuDe2_LapTrinhGiaoDien\ChuDe2_LapTrinhGiaoDien\TinhTienHocTrungTam\obj\Debug\TinhTienHocTrungTam.Demo.resources
+D:\Study\Desktop\ThucHanh\ChuDe2_LapTrinhGiaoDien\ChuDe2_LapTrinhGiaoDien\TinhTienHocTrungTam\obj\Debug\TinhTienHocTrungTam.Properties.Resources.resources
+D:\Study\Desktop\ThucHanh\ChuDe2_LapTrinhGiaoDien\ChuDe2_LapTrinhGiaoDien\TinhTienHocTrungTam\obj\Debug\TinhTienHocTrungTam.csproj.GenerateResource.cache
+D:\Study\Desktop\ThucHanh\ChuDe2_LapTrinhGiaoDien\ChuDe2_LapTrinhGiaoDien\TinhTienHocTrungTam\obj\Debug\TinhTienHocTrungTam.csproj.CoreCompileInputs.cache
+D:\Study\Desktop\ThucHanh\ChuDe2_LapTrinhGiaoDien\ChuDe2_LapTrinhGiaoDien\TinhTienHocTrungTam\obj\Debug\TinhTienHocTrungTam.exe
+D:\Study\Desktop\ThucHanh\ChuDe2_LapTrinhGiaoDien\ChuDe2_LapTrinhGiaoDien\TinhTienHocTrungTam\obj\Debug\TinhTienHocTrungTam.pdb

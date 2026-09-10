@@ -1,0 +1,11 @@
+d:\Study\Desktop\ThucHanh\ChuDe2_LapTrinhGiaoDien\ChuDe2_LapTrinhGiaoDien\QuanLySinhVien\bin\Debug\DanhSachSV.txt
+d:\Study\Desktop\ThucHanh\ChuDe2_LapTrinhGiaoDien\ChuDe2_LapTrinhGiaoDien\QuanLySinhVien\bin\Debug\QuanLySinhVien.exe.config
+d:\Study\Desktop\ThucHanh\ChuDe2_LapTrinhGiaoDien\ChuDe2_LapTrinhGiaoDien\QuanLySinhVien\bin\Debug\QuanLySinhVien.exe
+d:\Study\Desktop\ThucHanh\ChuDe2_LapTrinhGiaoDien\ChuDe2_LapTrinhGiaoDien\QuanLySinhVien\bin\Debug\QuanLySinhVien.pdb
+d:\Study\Desktop\ThucHanh\ChuDe2_LapTrinhGiaoDien\ChuDe2_LapTrinhGiaoDien\QuanLySinhVien\obj\Debug\QuanLySinhVien.csproj.AssemblyReference.cache
+d:\Study\Desktop\ThucHanh\ChuDe2_LapTrinhGiaoDien\ChuDe2_LapTrinhGiaoDien\QuanLySinhVien\obj\Debug\QuanLySinhVien.Properties.Resources.resources
+d:\Study\Desktop\ThucHanh\ChuDe2_LapTrinhGiaoDien\ChuDe2_LapTrinhGiaoDien\QuanLySinhVien\obj\Debug\QuanLySinhVien.csproj.GenerateResource.cache
+d:\Study\Desktop\ThucHanh\ChuDe2_LapTrinhGiaoDien\ChuDe2_LapTrinhGiaoDien\QuanLySinhVien\obj\Debug\QuanLySinhVien.csproj.CoreCompileInputs.cache
+d:\Study\Desktop\ThucHanh\ChuDe2_LapTrinhGiaoDien\ChuDe2_LapTrinhGiaoDien\QuanLySinhVien\obj\Debug\QuanLySinhVien.exe
+d:\Study\Desktop\ThucHanh\ChuDe2_LapTrinhGiaoDien\ChuDe2_LapTrinhGiaoDien\QuanLySinhVien\obj\Debug\QuanLySinhVien.pdb
+d:\Study\Desktop\ThucHanh\ChuDe2_LapTrinhGiaoDien\ChuDe2_LapTrinhGiaoDien\QuanLySinhVien\obj\Debug\QuanLySinhVien.frmSinhVien.resources
