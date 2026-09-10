@@ -1,0 +1,642 @@
+<Window x:Class="QuanLyDichVuKhachSan.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:views="clr-namespace:QuanLyDichVuKhachSan.Views"
+        mc:Ignorable="d"
+        Title="Hệ Thống Quản Lý Dịch Vụ - Dalat Hotel" 
+        Icon="Resources/app_icon.ico"
+        Height="480" Width="480" MinHeight="460" MinWidth="460"
+        WindowStartupLocation="CenterScreen" Background="#FFFFFF"
+        UseLayoutRounding="True"
+        SnapsToDevicePixels="True"
+        TextOptions.TextFormattingMode="Display"
+        TextOptions.TextRenderingMode="ClearType"
+        TextOptions.TextHintingMode="Fixed">
+
+    <Grid>
+        <!-- BLOCKING OVERLAY: Vô hiệu hóa toàn bộ thao tác khi đang làm mới dữ liệu -->
+        <Grid Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}" 
+              Background="#01000000" 
+              Panel.ZIndex="9999" 
+              IsHitTestVisible="True"/>
+
+        <!-- Khi CHƯA đăng nhập -> Hiện LoginView phủ kín màn hình nhỏ gọn -->
+        <Grid Visibility="{Binding IsLoggedIn, Converter={StaticResource InvBoolToVis}}" 
+              Background="#FFFFFF" Panel.ZIndex="999">
+            <views:LoginView x:Name="LoginControl"/>
+        </Grid>
+
+        <!-- Khi ĐÃ đăng nhập -> Hiện Giao diện làm việc chính theo vai trò -->
+        <Grid Visibility="{Binding IsLoggedIn, Converter={StaticResource BoolToVis}}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="64"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- TOP NAVBAR -->
+            <Border Grid.Row="0" Background="#1E293B" Padding="20,0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Hotel Brand -->
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock Text="🏨" FontSize="26" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="DALAT HOTEL" FontSize="16" FontWeight="Bold" Foreground="White"/>
+                            <TextBlock Text="HỆ THỐNG QUẢN LÝ DỊCH VỤ" FontSize="11" Foreground="#94A3B8"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- User Profile & Logout & Sync -->
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Button Command="{Binding SyncDatabaseCommand}" 
+                                IsEnabled="{Binding IsBusy, Converter={StaticResource InvBool}}"
+                                Content="🔄 Làm Mới" 
+                                ToolTip="Làm mới dữ liệu từ CSDL SQL Server và cập nhật toàn bộ giao diện"
+                                Height="34" 
+                                Padding="12,0" 
+                                Style="{StaticResource GoldButton}" 
+                                FontSize="12" 
+                                Margin="0,0,12,0"/>
+
+                        <!-- User Role Badge (Right click for Admin to open Account Management) -->
+                        <Border Background="{Binding RoleBadgeBackground}" 
+                                CornerRadius="14" 
+                                Padding="14,6" 
+                                Margin="0,0,12,0"
+                                ToolTip="Tài khoản đang đăng nhập">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="🛡️ " FontSize="12" VerticalAlignment="Center"/>
+                                <TextBlock Text="{Binding CurrentUserRoleDisplay}" FontSize="12" FontWeight="Bold" Foreground="White" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Button Command="{Binding LogoutCommand}" Content="🚪 Đăng Xuất" Style="{StaticResource RedButton}" Height="34" FontSize="12"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- MAIN WORKSPACE -->
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="260"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- LEFT SIDEBAR NAVIGATION -->
+                <Border Grid.Column="0" Background="#0F172A" Padding="14,18">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+                            <StackPanel>
+                                <!-- ROLE BADGE BANNER -->
+                                <Border Background="#1E293B" CornerRadius="8" Padding="10" Margin="0,0,0,16">
+                                    <StackPanel>
+                                        <TextBlock Text="VAI TRÒ HIỆN TẠI:" FontSize="10" FontWeight="Bold" Foreground="#94A3B8"/>
+                                        <TextBlock Text="{Binding CurrentUserRoleDisplay}" FontSize="14" FontWeight="Bold" Foreground="#F59E0B" Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- SECTION: MÀN HÌNH CHUNG TOÀN HỆ THỐNG -->
+                                <TextBlock Text="🛏️ SƠ ĐỒ &amp; THANH TOÁN" FontSize="11" FontWeight="Bold" Foreground="#94A3B8" Margin="8,0,0,6"/>
+
+                                <Button Command="{Binding SelectTabCommand}" CommandParameter="RoomMap" Content="🗺️ Sơ Đồ Phòng &amp; Dịch Vụ" Margin="0,0,0,6">
+                                    <Button.Style>
+                                        <Style TargetType="Button" BasedOn="{StaticResource SidebarButton}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding CurrentTab}" Value="RoomMap">
+                                                    <Setter Property="Background" Value="#334155"/>
+                                                    <Setter Property="BorderBrush" Value="#F59E0B"/>
+                                                    <Setter Property="BorderThickness" Value="1.5"/>
+                                                    <Setter Property="Foreground" Value="#F59E0B"/>
+                                                    <Setter Property="FontWeight" Value="Bold"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+
+                                <Button Command="{Binding SelectTabCommand}" CommandParameter="Transactions" Content="📜 Lịch Sử Giao Dịch" Margin="0,0,0,14">
+                                    <Button.Style>
+                                        <Style TargetType="Button" BasedOn="{StaticResource SidebarButton}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding CurrentTab}" Value="Transactions">
+                                                    <Setter Property="Background" Value="#334155"/>
+                                                    <Setter Property="BorderBrush" Value="#F59E0B"/>
+                                                    <Setter Property="BorderThickness" Value="1.5"/>
+                                                    <Setter Property="Foreground" Value="#F59E0B"/>
+                                                    <Setter Property="FontWeight" Value="Bold"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+
+                                <!-- SECTION: ADMIN ONLY -->
+                                <StackPanel Visibility="{Binding IsAdmin, Converter={StaticResource BoolToVis}}">
+                                    <TextBlock Text="📊 BÁO CÁO &amp; QUẢN TRỊ (ADMIN)" FontSize="11" FontWeight="Bold" Foreground="#94A3B8" Margin="8,0,0,6"/>
+
+                                    <Button Command="{Binding SelectTabCommand}" CommandParameter="Statistics" Content="📈 Báo Cáo Doanh Thu">
+                                        <Button.Style>
+                                            <Style TargetType="Button" BasedOn="{StaticResource SidebarButton}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding CurrentTab}" Value="Statistics">
+                                                        <Setter Property="Background" Value="#334155"/>
+                                                        <Setter Property="BorderBrush" Value="#F59E0B"/>
+                                                        <Setter Property="BorderThickness" Value="1.5"/>
+                                                        <Setter Property="Foreground" Value="#F59E0B"/>
+                                                        <Setter Property="FontWeight" Value="Bold"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+
+                                    <Button Command="{Binding SelectTabCommand}" CommandParameter="Staff" Content="👥 Đội Ngũ Lễ Tân">
+                                        <Button.Style>
+                                            <Style TargetType="Button" BasedOn="{StaticResource SidebarButton}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding CurrentTab}" Value="Staff">
+                                                        <Setter Property="Background" Value="#334155"/>
+                                                        <Setter Property="BorderBrush" Value="#F59E0B"/>
+                                                        <Setter Property="BorderThickness" Value="1.5"/>
+                                                        <Setter Property="Foreground" Value="#F59E0B"/>
+                                                        <Setter Property="FontWeight" Value="Bold"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+
+                                    <Button Command="{Binding SelectTabCommand}" CommandParameter="Customers" Content="👤 Danh Sách Khách Hàng">
+                                        <Button.Style>
+                                            <Style TargetType="Button" BasedOn="{StaticResource SidebarButton}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding CurrentTab}" Value="Customers">
+                                                        <Setter Property="Background" Value="#334155"/>
+                                                        <Setter Property="BorderBrush" Value="#F59E0B"/>
+                                                        <Setter Property="BorderThickness" Value="1.5"/>
+                                                        <Setter Property="Foreground" Value="#F59E0B"/>
+                                                        <Setter Property="FontWeight" Value="Bold"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+
+                                    <Button Command="{Binding SelectTabCommand}" CommandParameter="Inventory" Content="📦 Kho Hàng">
+                                        <Button.Style>
+                                            <Style TargetType="Button" BasedOn="{StaticResource SidebarButton}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding CurrentTab}" Value="Inventory">
+                                                        <Setter Property="Background" Value="#334155"/>
+                                                        <Setter Property="BorderBrush" Value="#F59E0B"/>
+                                                        <Setter Property="BorderThickness" Value="1.5"/>
+                                                        <Setter Property="Foreground" Value="#F59E0B"/>
+                                                        <Setter Property="FontWeight" Value="Bold"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+
+                                    <Button Command="{Binding SelectTabCommand}" CommandParameter="ServicesConfig" Margin="0,0,0,14" Height="Auto" MinHeight="42" Padding="12,6">
+                                        <Button.Content>
+                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                <TextBlock Text="⚙️ " FontSize="13" VerticalAlignment="Center"/>
+                                                <TextBlock Text="Quản Lý Tài Khoản&#x0a;&amp; Cấu Hình Dịch Vụ" FontSize="11.5" FontWeight="SemiBold" LineHeight="16" VerticalAlignment="Center"/>
+                                            </StackPanel>
+                                        </Button.Content>
+                                        <Button.Style>
+                                            <Style TargetType="Button" BasedOn="{StaticResource SidebarButton}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding CurrentTab}" Value="ServicesConfig">
+                                                        <Setter Property="Background" Value="#334155"/>
+                                                        <Setter Property="BorderBrush" Value="#F59E0B"/>
+                                                        <Setter Property="BorderThickness" Value="1.5"/>
+                                                        <Setter Property="Foreground" Value="#F59E0B"/>
+                                                        <Setter Property="FontWeight" Value="Bold"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+                                </StackPanel>
+
+                                <!-- SECTION: CÁC DỊCH VỤ KHÁCH SẠN -->
+                                <TextBlock Text="🛎️ DỊCH VỤ" FontSize="11" FontWeight="Bold" Foreground="#94A3B8" Margin="8,0,0,6"/>
+
+                                <Button Command="{Binding SelectTabCommand}" CommandParameter="Food" Content="🍲 Ăn Uống"
+                                        Visibility="{Binding IsFoodServiceVisible, Converter={StaticResource BoolToVis}}">
+                                    <Button.Style>
+                                        <Style TargetType="Button" BasedOn="{StaticResource SidebarButton}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding CurrentTab}" Value="Food">
+                                                    <Setter Property="Background" Value="#334155"/>
+                                                    <Setter Property="BorderBrush" Value="#F59E0B"/>
+                                                    <Setter Property="BorderThickness" Value="1.5"/>
+                                                    <Setter Property="Foreground" Value="#F59E0B"/>
+                                                    <Setter Property="FontWeight" Value="Bold"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+
+                                <Button Command="{Binding SelectTabCommand}" CommandParameter="Event" Content="🏛️ Sảnh &amp; Sự Kiện"
+                                        Visibility="{Binding IsEventServiceVisible, Converter={StaticResource BoolToVis}}">
+                                    <Button.Style>
+                                        <Style TargetType="Button" BasedOn="{StaticResource SidebarButton}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding CurrentTab}" Value="Event">
+                                                    <Setter Property="Background" Value="#334155"/>
+                                                    <Setter Property="BorderBrush" Value="#F59E0B"/>
+                                                    <Setter Property="BorderThickness" Value="1.5"/>
+                                                    <Setter Property="Foreground" Value="#F59E0B"/>
+                                                    <Setter Property="FontWeight" Value="Bold"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+
+                                <Button Command="{Binding SelectTabCommand}" CommandParameter="Vehicle" Content="🛵 Cho Thuê Xe Máy"
+                                        Visibility="{Binding IsVehicleServiceVisible, Converter={StaticResource BoolToVis}}">
+                                    <Button.Style>
+                                        <Style TargetType="Button" BasedOn="{StaticResource SidebarButton}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding CurrentTab}" Value="Vehicle">
+                                                    <Setter Property="Background" Value="#334155"/>
+                                                    <Setter Property="BorderBrush" Value="#F59E0B"/>
+                                                    <Setter Property="BorderThickness" Value="1.5"/>
+                                                    <Setter Property="Foreground" Value="#F59E0B"/>
+                                                    <Setter Property="FontWeight" Value="Bold"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+
+                                <Button Command="{Binding SelectTabCommand}" CommandParameter="Parking" Content="🅿️ Bãi &amp; Hầm Đỗ Xe"
+                                        Visibility="{Binding IsParkingServiceVisible, Converter={StaticResource BoolToVis}}">
+                                    <Button.Style>
+                                        <Style TargetType="Button" BasedOn="{StaticResource SidebarButton}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding CurrentTab}" Value="Parking">
+                                                    <Setter Property="Background" Value="#334155"/>
+                                                    <Setter Property="BorderBrush" Value="#F59E0B"/>
+                                                    <Setter Property="BorderThickness" Value="1.5"/>
+                                                    <Setter Property="Foreground" Value="#F59E0B"/>
+                                                    <Setter Property="FontWeight" Value="Bold"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+
+                                <Button Command="{Binding SelectTabCommand}" CommandParameter="Laundry" Content="🧺 Giặt Ủi"
+                                        Visibility="{Binding IsLaundryServiceVisible, Converter={StaticResource BoolToVis}}" Margin="0,0,0,6">
+                                    <Button.Style>
+                                        <Style TargetType="Button" BasedOn="{StaticResource SidebarButton}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding CurrentTab}" Value="Laundry">
+                                                    <Setter Property="Background" Value="#334155"/>
+                                                    <Setter Property="BorderBrush" Value="#F59E0B"/>
+                                                    <Setter Property="BorderThickness" Value="1.5"/>
+                                                    <Setter Property="Foreground" Value="#F59E0B"/>
+                                                    <Setter Property="FontWeight" Value="Bold"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+                            </StackPanel>
+                        </ScrollViewer>
+
+                        <!-- GÓC DƯỚI BÊN TRÁI: ICON THÔNG BÁO REALTIME PHÂN QUYỀN -->
+                        <Border Grid.Row="1" Margin="0,10,0,0" Padding="0,8,0,0" BorderBrush="#334155" BorderThickness="0,1,0,0">
+                            <Grid>
+                                <!-- Bell Button -->
+                                <Button Command="{Binding ToggleNotificationPopupCommand}" 
+                                        Cursor="Hand" Height="40" Padding="10,0"
+                                        Background="#1E293B" BorderBrush="#334155" BorderThickness="1">
+                                    <Button.Resources>
+                                        <Style TargetType="Border">
+                                            <Setter Property="CornerRadius" Value="8"/>
+                                        </Style>
+                                    </Button.Resources>
+                                    <Grid HorizontalAlignment="Stretch" Width="210">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Grid.Column="0" Text="🔔" FontSize="16" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                        <TextBlock Grid.Column="1" Text="Thông Báo" FontSize="12.5" FontWeight="SemiBold" Foreground="#E2E8F0" VerticalAlignment="Center"/>
+
+                                        <!-- Unread Badge -->
+                                        <Border Grid.Column="2" Background="#DC2626" CornerRadius="10" Padding="6,2" MinWidth="20" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                Visibility="{Binding HasUnreadNotifications, Converter={StaticResource BoolToVis}}">
+                                            <TextBlock Text="{Binding UnreadNotificationCount}" FontSize="10" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+                                        </Border>
+                                    </Grid>
+                                </Button>
+
+                                <!-- Notification Dropup / Popup -->
+                                <Popup IsOpen="{Binding IsNotificationPopupOpen, Mode=TwoWay}" StaysOpen="False" Placement="Top" AllowsTransparency="True">
+                                    <Border Background="White" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="12" Width="380" MaxHeight="450" Padding="14" Margin="0,0,0,8">
+                                        <Border.Effect>
+                                            <DropShadowEffect BlurRadius="20" ShadowDepth="4" Opacity="0.25" Color="#000000"/>
+                                        </Border.Effect>
+
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/> <!-- Popup Header -->
+                                                <RowDefinition Height="Auto"/> <!-- Divider -->
+                                                <RowDefinition Height="*"/>    <!-- Notification List -->
+                                            </Grid.RowDefinitions>
+
+                                            <!-- Header -->
+                                            <Grid Grid.Row="0" Margin="0,0,0,8">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <TextBlock Text="🔔 THÔNG BÁO HỆ THỐNG" FontSize="13" FontWeight="Bold" Foreground="#1E293B" VerticalAlignment="Center"/>
+
+                                                <Button Grid.Column="1" Command="{Binding MarkAllNotificationsReadCommand}" 
+                                                        Content="✓ Đã đọc hết" FontSize="10.5" Height="26" Padding="6,0" Style="{StaticResource OutlineButton}"/>
+                                            </Grid>
+
+                                            <Separator Grid.Row="1" Background="#E2E8F0" Margin="0,0,0,10"/>
+
+                                            <!-- List -->
+                                            <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" MaxHeight="340">
+                                                <ItemsControl ItemsSource="{Binding FilteredNotifications}">
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <Border CornerRadius="8" BorderThickness="1" Padding="10" Margin="0,0,0,8"
+                                                                    Cursor="Hand"
+                                                                    ToolTip="{Binding ToolTipText}">
+                                                                <Border.ContextMenu>
+                                                                    <ContextMenu>
+                                                                        <MenuItem Header="✓ Đã đọc" 
+                                                                                  FontWeight="SemiBold"
+                                                                                  Command="{Binding DataContext.MarkNotificationReadCommand, RelativeSource={RelativeSource AncestorType=Window}}" 
+                                                                                  CommandParameter="{Binding}"/>
+                                                                    </ContextMenu>
+                                                                </Border.ContextMenu>
+                                                                <Border.InputBindings>
+                                                                    <MouseBinding MouseAction="LeftDoubleClick" 
+                                                                                  Command="{Binding DataContext.OpenNotificationTargetCommand, RelativeSource={RelativeSource AncestorType=Window}}" 
+                                                                                  CommandParameter="{Binding}"/>
+                                                                </Border.InputBindings>
+                                                                <Border.Style>
+                                                                    <Style TargetType="Border">
+                                                                        <Setter Property="Background" Value="#F8FAFC"/>
+                                                                        <Setter Property="BorderBrush" Value="#E2E8F0"/>
+                                                                        <Setter Property="Opacity" Value="0.85"/>
+                                                                        <Style.Triggers>
+                                                                            <DataTrigger Binding="{Binding IsRead}" Value="False">
+                                                                                <Setter Property="Background" Value="#FFFFFF"/>
+                                                                                <Setter Property="BorderBrush" Value="#CBD5E1"/>
+                                                                                <Setter Property="Opacity" Value="1.0"/>
+                                                                            </DataTrigger>
+                                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                                <Setter Property="Background" Value="#EFF6FF"/>
+                                                                                <Setter Property="BorderBrush" Value="#93C5FD"/>
+                                                                                <Setter Property="Opacity" Value="1.0"/>
+                                                                            </Trigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </Border.Style>
+                                                                <Grid>
+                                                                    <Grid.ColumnDefinitions>
+                                                                        <ColumnDefinition Width="Auto"/>
+                                                                        <ColumnDefinition Width="*"/>
+                                                                    </Grid.ColumnDefinitions>
+
+                                                                    <Border Grid.Column="0" Width="32" Height="32" CornerRadius="16" Background="#F1F5F9" Margin="0,0,10,0" VerticalAlignment="Top">
+                                                                        <TextBlock Text="{Binding Icon}" FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                    </Border>
+
+                                                                    <StackPanel Grid.Column="1">
+                                                                        <Grid>
+                                                                            <Grid.ColumnDefinitions>
+                                                                                <ColumnDefinition Width="*"/>
+                                                                                <ColumnDefinition Width="Auto"/>
+                                                                            </Grid.ColumnDefinitions>
+                                                                            <TextBlock Grid.Column="0" Text="{Binding Title}" FontSize="12" FontWeight="Bold" Foreground="{Binding ColorHex}" TextTrimming="CharacterEllipsis"/>
+                                                                            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                                                                <TextBlock Text="{Binding RelativeTime}" FontSize="10" Foreground="#94A3B8" VerticalAlignment="Center"/>
+                                                                                <!-- Tag Đã đọc -->
+                                                                                <Border Background="#E2E8F0" CornerRadius="4" Padding="5,1" Margin="6,0,0,0" VerticalAlignment="Center"
+                                                                                        Visibility="{Binding IsRead, Converter={StaticResource BoolToVis}}">
+                                                                                    <TextBlock Text="Đã đọc" FontSize="9" FontWeight="SemiBold" Foreground="#64748B"/>
+                                                                                </Border>
+                                                                            </StackPanel>
+                                                                        </Grid>
+                                                                        <TextBlock Text="{Binding Message}" FontSize="11" Foreground="#334155" TextWrapping="Wrap" Margin="0,3,0,3"/>
+                                                                        <TextBlock Text="👉 Nhấp đúp để chuyển tới dòng thanh toán" FontSize="9.5" FontWeight="SemiBold" Foreground="#2563EB" Opacity="0.85"
+                                                                                   Visibility="{Binding ShowDoubleClickPrompt, Converter={StaticResource BoolToVis}}"/>
+                                                                    </StackPanel>
+                                                                </Grid>
+                                                            </Border>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                            </ScrollViewer>
+                                        </Grid>
+                                    </Border>
+                                </Popup>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </Border>
+
+                <!-- RIGHT MAIN CONTENT (DYNAMIC TABS) -->
+                <Grid Grid.Column="1">
+                    <!-- Tab: Sơ đồ phòng & Quản lý dịch vụ -->
+                    <views:RoomMapView DataContext="{Binding RoomMapVM}">
+                        <views:RoomMapView.Style>
+                            <Style TargetType="views:RoomMapView">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding DataContext.CurrentTab, RelativeSource={RelativeSource AncestorType=Window}}" Value="RoomMap">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </views:RoomMapView.Style>
+                    </views:RoomMapView>
+
+                    <!-- Tab: Báo cáo thống kê (Admin only) -->
+                    <views:StatisticsView DataContext="{Binding StatisticsVM}">
+                        <views:StatisticsView.Style>
+                            <Style TargetType="views:StatisticsView">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding DataContext.CurrentTab, RelativeSource={RelativeSource AncestorType=Window}}" Value="Statistics">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </views:StatisticsView.Style>
+                    </views:StatisticsView>
+
+                    <!-- Tab: Quản lý nhân sự lễ tân (Admin only) -->
+                    <views:StaffManagementView DataContext="{Binding StaffVM}">
+                        <views:StaffManagementView.Style>
+                            <Style TargetType="views:StaffManagementView">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding DataContext.CurrentTab, RelativeSource={RelativeSource AncestorType=Window}}" Value="Staff">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </views:StaffManagementView.Style>
+                    </views:StaffManagementView>
+
+                    <!-- Tab: Danh sách khách hàng (Admin only) -->
+                    <views:CustomerListView DataContext="{Binding CustomerVM}">
+                        <views:CustomerListView.Style>
+                            <Style TargetType="views:CustomerListView">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding DataContext.CurrentTab, RelativeSource={RelativeSource AncestorType=Window}}" Value="Customers">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </views:CustomerListView.Style>
+                    </views:CustomerListView>
+
+                    <!-- Tab: Kho hàng món khô (Admin only) -->
+                    <views:InventoryManagementView DataContext="{Binding InventoryVM}">
+                        <views:InventoryManagementView.Style>
+                            <Style TargetType="views:InventoryManagementView">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding DataContext.CurrentTab, RelativeSource={RelativeSource AncestorType=Window}}" Value="Inventory">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </views:InventoryManagementView.Style>
+                    </views:InventoryManagementView>
+
+                    <!-- Tab: Cấu hình dịch vụ (Admin only) -->
+                    <views:ServicesConfigView DataContext="{Binding ServicesConfigVM}">
+                        <views:ServicesConfigView.Style>
+                            <Style TargetType="views:ServicesConfigView">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding DataContext.CurrentTab, RelativeSource={RelativeSource AncestorType=Window}}" Value="ServicesConfig">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </views:ServicesConfigView.Style>
+                    </views:ServicesConfigView>
+
+                    <!-- Tab: Ẩm thực & Mini-bar -->
+                    <views:FoodServiceView DataContext="{Binding FoodVM}">
+                        <views:FoodServiceView.Style>
+                            <Style TargetType="views:FoodServiceView">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding DataContext.CurrentTab, RelativeSource={RelativeSource AncestorType=Window}}" Value="Food">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </views:FoodServiceView.Style>
+                    </views:FoodServiceView>
+
+                    <!-- Tab: Sự kiện & Hội nghị -->
+                    <views:EventServiceView DataContext="{Binding EventVM}">
+                        <views:EventServiceView.Style>
+                            <Style TargetType="views:EventServiceView">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding DataContext.CurrentTab, RelativeSource={RelativeSource AncestorType=Window}}" Value="Event">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </views:EventServiceView.Style>
+                    </views:EventServiceView>
+
+                    <!-- Tab: Cho thuê xe máy -->
+                    <views:VehicleServiceView DataContext="{Binding VehicleVM}">
+                        <views:VehicleServiceView.Style>
+                            <Style TargetType="views:VehicleServiceView">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding DataContext.CurrentTab, RelativeSource={RelativeSource AncestorType=Window}}" Value="Vehicle">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </views:VehicleServiceView.Style>
+                    </views:VehicleServiceView>
+
+                    <!-- Tab: Bãi đỗ xe -->
+                    <views:ParkingServiceView DataContext="{Binding ParkingVM}">
+                        <views:ParkingServiceView.Style>
+                            <Style TargetType="views:ParkingServiceView">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding DataContext.CurrentTab, RelativeSource={RelativeSource AncestorType=Window}}" Value="Parking">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </views:ParkingServiceView.Style>
+                    </views:ParkingServiceView>
+
+                    <!-- Tab: Giặt ủi -->
+                    <views:LaundryServiceView DataContext="{Binding LaundryVM}">
+                        <views:LaundryServiceView.Style>
+                            <Style TargetType="views:LaundryServiceView">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding DataContext.CurrentTab, RelativeSource={RelativeSource AncestorType=Window}}" Value="Laundry">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </views:LaundryServiceView.Style>
+                    </views:LaundryServiceView>
+
+                    <!-- Tab: Lịch sử giao dịch -->
+                    <views:TransactionHistoryView DataContext="{Binding TransactionsVM}">
+                        <views:TransactionHistoryView.Style>
+                            <Style TargetType="views:TransactionHistoryView">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding DataContext.CurrentTab, RelativeSource={RelativeSource AncestorType=Window}}" Value="Transactions">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </views:TransactionHistoryView.Style>
+                    </views:TransactionHistoryView>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>
